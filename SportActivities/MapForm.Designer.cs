@@ -28,11 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.mapBox = new SharpMap.Forms.MapBox();
             this.layersTreeView = new System.Windows.Forms.TreeView();
-            this.mapQueryToolStrip1 = new SharpMap.Forms.ToolBar.MapQueryToolStrip(this.components);
-            this.mapVariableLayerToolStrip1 = new SharpMap.Forms.ToolBar.MapVariableLayerToolStrip(this.components);
+            this.mapCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // mapBox
@@ -56,43 +54,37 @@
             // 
             // layersTreeView
             // 
+            this.layersTreeView.AllowDrop = true;
             this.layersTreeView.CheckBoxes = true;
-            this.layersTreeView.Location = new System.Drawing.Point(13, 50);
+            this.layersTreeView.Location = new System.Drawing.Point(13, 70);
             this.layersTreeView.Name = "layersTreeView";
-            this.layersTreeView.Size = new System.Drawing.Size(247, 350);
+            this.layersTreeView.Size = new System.Drawing.Size(247, 330);
             this.layersTreeView.TabIndex = 1;
             this.layersTreeView.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.layersTreeView_AfterCheck);
             this.layersTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.layersTreeView_ItemDrag);
             this.layersTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.layersTreeView_AfterSelect);
+            this.layersTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.layersTreeView_DragDrop);
+            this.layersTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.layersTreeView_DragEnter);
             // 
-            // mapQueryToolStrip1
+            // mapCheckBox
             // 
-            this.mapQueryToolStrip1.Enabled = false;
-            this.mapQueryToolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.mapQueryToolStrip1.MapControl = null;
-            this.mapQueryToolStrip1.Name = "mapQueryToolStrip1";
-            this.mapQueryToolStrip1.Size = new System.Drawing.Size(1096, 25);
-            this.mapQueryToolStrip1.TabIndex = 2;
-            this.mapQueryToolStrip1.Text = "mapQueryToolStrip1";
-            this.mapQueryToolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.mapQueryToolStrip1_ItemClicked);
-            // 
-            // mapVariableLayerToolStrip1
-            // 
-            this.mapVariableLayerToolStrip1.Enabled = false;
-            this.mapVariableLayerToolStrip1.Location = new System.Drawing.Point(0, 25);
-            this.mapVariableLayerToolStrip1.MapControl = null;
-            this.mapVariableLayerToolStrip1.Name = "mapVariableLayerToolStrip1";
-            this.mapVariableLayerToolStrip1.Size = new System.Drawing.Size(1096, 25);
-            this.mapVariableLayerToolStrip1.TabIndex = 3;
-            this.mapVariableLayerToolStrip1.Text = "mapVariableLayerToolStrip1";
+            this.mapCheckBox.AutoSize = true;
+            this.mapCheckBox.Checked = true;
+            this.mapCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.mapCheckBox.Location = new System.Drawing.Point(13, 50);
+            this.mapCheckBox.Name = "mapCheckBox";
+            this.mapCheckBox.Size = new System.Drawing.Size(53, 17);
+            this.mapCheckBox.TabIndex = 2;
+            this.mapCheckBox.Text = "Mapa";
+            this.mapCheckBox.UseVisualStyleBackColor = true;
+            this.mapCheckBox.CheckedChanged += new System.EventHandler(this.mapCheckBox_CheckedChanged);
             // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1096, 742);
-            this.Controls.Add(this.mapVariableLayerToolStrip1);
-            this.Controls.Add(this.mapQueryToolStrip1);
+            this.Controls.Add(this.mapCheckBox);
             this.Controls.Add(this.layersTreeView);
             this.Controls.Add(this.mapBox);
             this.Name = "MapForm";
@@ -106,8 +98,7 @@
 
         private SharpMap.Forms.MapBox mapBox;
         private System.Windows.Forms.TreeView layersTreeView;
-        private SharpMap.Forms.ToolBar.MapQueryToolStrip mapQueryToolStrip1;
-        private SharpMap.Forms.ToolBar.MapVariableLayerToolStrip mapVariableLayerToolStrip1;
+        private System.Windows.Forms.CheckBox mapCheckBox;
     }
 }
 

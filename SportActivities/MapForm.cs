@@ -18,19 +18,15 @@ namespace SportActivities
 {
     public partial class MapForm : Form
     {
-        public const int MAP_HEIGHT = 400;
-        public const int MAP_WIDTH = 300;
-
-        private LayerCollection activeLayers;
-        private List<string> activeLayersNames;
         private Dictionary<string, VectorLayer> layers;
-        private int zoomLevel;
         private List<LayerRecord> layerRecords;
+
         private String connectionParams;
 
         private CoordinateTransformationFactory _ctFact;
         public ICoordinateTransformation transfCoord;
         public ICoordinateTransformation reverseTransfCoord;
+
         public MapForm()
         {
             InitializeComponent();
@@ -41,7 +37,6 @@ namespace SportActivities
 
             layers = new Dictionary<string, VectorLayer>();
             layerRecords = GetAllLayers();
-            activeLayers = new LayerCollection();
 
             _ctFact = new CoordinateTransformationFactory();
             transfCoord = _ctFact.CreateFromCoordinateSystems(ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84, ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WebMercator);
@@ -52,8 +47,8 @@ namespace SportActivities
 
             AddToTreeView();
 
-            //mapBox.Map.Layers.AddCollection(activeLayers);
             mapBox.Map.BackgroundLayer.Add(CreateBackgroundLayer());
+
             mapBox.Map.ZoomToExtents();
 
             mapBox.Refresh();
@@ -80,12 +75,9 @@ namespace SportActivities
 
         private void AddToTreeView()
         {
-            TreeNode[] nodes = new TreeNode[layers.Count + 1];
+            TreeNode[] nodes = new TreeNode[layers.Count];
 
-            nodes[0] = new TreeNode("mapa");
-            nodes[0].Checked = true;
-
-            int i = 1;
+            int i = 0;
             foreach(VectorLayer layer in layers.Values)
             {
                 nodes[i] = new TreeNode(layer.LayerName);
@@ -145,24 +137,72 @@ namespace SportActivities
 
         private void layersTreeView_ItemDrag(object sender, ItemDragEventArgs e)
         {
-
+            DoDragDrop(e.Item, DragDropEffects.Move);
         }
 
         private void layersTreeView_AfterCheck(object sender, TreeViewEventArgs e)
         {
             if(e.Action != TreeViewAction.Unknown)
             {
-                if(e.Node.Checked)
-                {
-                    mapBox.Map.Layers.Add(layers[e.Node.Text]);
-                }
+                if (e.Node.Checked)
+                    renderActiveLayers();
                 else
                 {
                     mapBox.Map.Layers.Remove(layers[e.Node.Text]);
+                    mapBox.Refresh();
                 }
 
-                mapBox.Refresh();
             }
+        }
+
+        private void layersTreeView_DragDrop(object sender, DragEventArgs e)
+        {
+            TreeNode NewNode;
+
+            if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
+            {
+                Point pt = ((TreeView)sender).PointToClient(new Point(e.X, e.Y));
+                TreeNode PreviousNode = layersTreeView.GetNodeAt(pt);
+                int index = -1;
+                if (PreviousNode == null)
+                    index = layersTreeView.Nodes.Count;
+                else
+                    index = layersTreeView.Nodes.IndexOf(PreviousNode) + 1;
+
+                NewNode = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
+
+                layersTreeView.Nodes.Insert(index, (TreeNode)NewNode.Clone());
+                NewNode.Remove();
+
+                renderActiveLayers();
+            }
+        }
+
+        private void layersTreeView_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Move;
+        }
+
+        private void renderActiveLayers()
+        {
+            mapBox.Map.Layers.Clear();
+
+            foreach(TreeNode layerNode in layersTreeView.Nodes)
+                if (layerNode.Checked)
+                    mapBox.Map.Layers.Add(layers[layerNode.Text]);
+
+            mapBox.Refresh();
+        }
+
+        private void mapCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (mapCheckBox.Checked)
+                mapBox.Map.BackgroundLayer.Add(CreateBackgroundLayer());
+            else
+                mapBox.Map.BackgroundLayer.Clear();
+
+            mapBox.Refresh();
+            mapBox.Invalidate();
         }
     }
 }
