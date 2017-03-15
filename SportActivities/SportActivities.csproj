@@ -149,6 +149,7 @@
   <ItemGroup>
     <Compile Include="GdalConfiguration.cs" />
     <Compile Include="GdalNativeConfiguration.cs" />
+    <Compile Include="LayerManager.cs" />
     <Compile Include="LayerRecord.cs" />
     <Compile Include="MapForm.cs">
       <SubType>Form</SubType>

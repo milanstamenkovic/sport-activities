@@ -1,4 +1,7 @@
-﻿using Npgsql;
+﻿using GeoAPI.CoordinateSystems.Transformations;
+using Npgsql;
+using ProjNet.CoordinateSystems.Transformations;
+using SharpMap;
 using SharpMap.Layers;
 using System;
 using System.Collections.Generic;
@@ -15,19 +18,66 @@ namespace SportActivities
 {
     public partial class MapForm : Form
     {
-        private ConnectionStringSettingsCollection connectionStrings;
+        public const int MAP_HEIGHT = 400;
+        public const int MAP_WIDTH = 300;
 
+        private LayerCollection layers;
+        private int zoomLevel;
+        private List<LayerRecord> layerRecords;
+        private String connectionParams;
+
+        private CoordinateTransformationFactory _ctFact ;
+        public ICoordinateTransformation transfCoord;
+        public ICoordinateTransformation reverseTransfCoord;
         public MapForm()
         {
             InitializeComponent();
 
-            this.connectionStrings = ConfigurationManager.ConnectionStrings;
+            connectionParams =
+                         System.Configuration.ConfigurationManager.
+                         ConnectionStrings["PostgreSQL"].ConnectionString;
 
-            List<LayerRecord> list = GetAllLayers();
-            VectorLayer layerRoads = new VectorLayer("Roads");
-            //layerRoads.DataSource = new SharpMap.Providers.
+            layerRecords = GetAllLayers();
+            layers = new LayerCollection();
+
+            _ctFact = new CoordinateTransformationFactory();
+            transfCoord = _ctFact.CreateFromCoordinateSystems(ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84, ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WebMercator);
+            reverseTransfCoord = _ctFact.CreateFromCoordinateSystems(ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WebMercator, ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84);
+
+
+            foreach (LayerRecord record in layerRecords)
+            {
+                if (!record.TableName.Equals("putevi") && !record.TableName.Equals("zgrade"))
+                {
+                    VectorLayer layer = new VectorLayer(record.TableName);
+                    layer.DataSource = new SharpMap.Data.Providers.PostGIS(connectionParams, record.TableName, "gid");
+                    layer.CoordinateTransformation = transfCoord;
+                    layer.ReverseCoordinateTransformation = reverseTransfCoord;
+                    layers.Add(layer);
+                }
+            }
+
+            AddToTreeView();
+
+            mapBox.Map.Layers.AddCollection(layers);
             mapBox.Map.BackgroundLayer.Add(CreateBackgroundLayer());
+
+            mapBox.Map.ZoomToExtents();
             mapBox.Refresh();
+            mapBox.EnableShiftButtonDragRectangleZoom = true;
+            mapBox.ActiveTool = SharpMap.Forms.MapBox.Tools.Pan;
+        }
+
+        private void AddToTreeView()
+        {
+            TreeNode[] nodes = new TreeNode[layers.Count];
+
+            for(int i = 0; i < layers.Count; ++i)
+            {
+                nodes[i] = new TreeNode(layers[i].LayerName);
+            }
+
+            layersTreeView.Nodes.AddRange(nodes);
         }
 
         public ILayer CreateBackgroundLayer()
@@ -38,7 +88,7 @@ namespace SportActivities
         public List<LayerRecord> GetAllLayers()
         {
             List<LayerRecord> layers;
-            using (NpgsqlConnection conn = new NpgsqlConnection(connectionStrings["PostgreSQL"].ConnectionString))
+            using (NpgsqlConnection conn = new NpgsqlConnection(connectionParams))
             {
                 conn.Open();
 
@@ -56,6 +106,21 @@ namespace SportActivities
             }
 
             return layers;
+        }
+
+        private void mapVariableLayerToolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void mapQueryToolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }

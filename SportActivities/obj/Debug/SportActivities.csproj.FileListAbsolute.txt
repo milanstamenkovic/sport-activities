@@ -43,4 +43,4 @@ C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivi
 C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivities\obj\Debug\SportActivities.csproj.GenerateResource.Cache
 C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivities\obj\Debug\SportActivities.exe
 C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivities\obj\Debug\SportActivities.pdb
-C:\Users\Milan\Documents\Visual Studio 2015\Projects\SportActivities\SportActivities\obj\Debug\SportActivities.csprojResolveAssemblyReference.cache
+C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivities\obj\Debug\SportActivities.csprojResolveAssemblyReference.cache
