@@ -21,12 +21,14 @@ namespace SportActivities
         public const int MAP_HEIGHT = 400;
         public const int MAP_WIDTH = 300;
 
-        private LayerCollection layers;
+        private LayerCollection activeLayers;
+        private List<string> activeLayersNames;
+        private Dictionary<string, VectorLayer> layers;
         private int zoomLevel;
         private List<LayerRecord> layerRecords;
         private String connectionParams;
 
-        private CoordinateTransformationFactory _ctFact ;
+        private CoordinateTransformationFactory _ctFact;
         public ICoordinateTransformation transfCoord;
         public ICoordinateTransformation reverseTransfCoord;
         public MapForm()
@@ -37,14 +39,30 @@ namespace SportActivities
                          System.Configuration.ConfigurationManager.
                          ConnectionStrings["PostgreSQL"].ConnectionString;
 
+            layers = new Dictionary<string, VectorLayer>();
             layerRecords = GetAllLayers();
-            layers = new LayerCollection();
+            activeLayers = new LayerCollection();
 
             _ctFact = new CoordinateTransformationFactory();
             transfCoord = _ctFact.CreateFromCoordinateSystems(ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84, ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WebMercator);
             reverseTransfCoord = _ctFact.CreateFromCoordinateSystems(ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WebMercator, ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84);
 
 
+            populateCollection();
+
+            AddToTreeView();
+
+            //mapBox.Map.Layers.AddCollection(activeLayers);
+            mapBox.Map.BackgroundLayer.Add(CreateBackgroundLayer());
+            mapBox.Map.ZoomToExtents();
+
+            mapBox.Refresh();
+            mapBox.EnableShiftButtonDragRectangleZoom = true;
+            mapBox.ActiveTool = SharpMap.Forms.MapBox.Tools.Pan;
+        }
+
+        private void populateCollection()
+        {
             foreach (LayerRecord record in layerRecords)
             {
                 if (!record.TableName.Equals("putevi") && !record.TableName.Equals("zgrade"))
@@ -53,28 +71,25 @@ namespace SportActivities
                     layer.DataSource = new SharpMap.Data.Providers.PostGIS(connectionParams, record.TableName, "gid");
                     layer.CoordinateTransformation = transfCoord;
                     layer.ReverseCoordinateTransformation = reverseTransfCoord;
-                    layers.Add(layer);
+
+                    layers.Add(layer.LayerName, layer);
                 }
             }
-
-            AddToTreeView();
-
-            mapBox.Map.Layers.AddCollection(layers);
-            mapBox.Map.BackgroundLayer.Add(CreateBackgroundLayer());
-
-            mapBox.Map.ZoomToExtents();
-            mapBox.Refresh();
-            mapBox.EnableShiftButtonDragRectangleZoom = true;
-            mapBox.ActiveTool = SharpMap.Forms.MapBox.Tools.Pan;
         }
+
 
         private void AddToTreeView()
         {
-            TreeNode[] nodes = new TreeNode[layers.Count];
+            TreeNode[] nodes = new TreeNode[layers.Count + 1];
 
-            for(int i = 0; i < layers.Count; ++i)
+            nodes[0] = new TreeNode("mapa");
+            nodes[0].Checked = true;
+
+            int i = 1;
+            foreach(VectorLayer layer in layers.Values)
             {
-                nodes[i] = new TreeNode(layers[i].LayerName);
+                nodes[i] = new TreeNode(layer.LayerName);
+                nodes[i++].Checked = false;
             }
 
             layersTreeView.Nodes.AddRange(nodes);
@@ -121,6 +136,33 @@ namespace SportActivities
         private void mapQueryToolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
+        }
+
+        private void layersTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+
+        }
+
+        private void layersTreeView_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+
+        }
+
+        private void layersTreeView_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            if(e.Action != TreeViewAction.Unknown)
+            {
+                if(e.Node.Checked)
+                {
+                    mapBox.Map.Layers.Add(layers[e.Node.Text]);
+                }
+                else
+                {
+                    mapBox.Map.Layers.Remove(layers[e.Node.Text]);
+                }
+
+                mapBox.Refresh();
+            }
         }
     }
 }

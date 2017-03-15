@@ -61,6 +61,9 @@
             this.layersTreeView.Name = "layersTreeView";
             this.layersTreeView.Size = new System.Drawing.Size(247, 350);
             this.layersTreeView.TabIndex = 1;
+            this.layersTreeView.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.layersTreeView_AfterCheck);
+            this.layersTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.layersTreeView_ItemDrag);
+            this.layersTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.layersTreeView_AfterSelect);
             // 
             // mapQueryToolStrip1
             // 
@@ -87,7 +90,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1096, 751);
+            this.ClientSize = new System.Drawing.Size(1096, 742);
             this.Controls.Add(this.mapVariableLayerToolStrip1);
             this.Controls.Add(this.mapQueryToolStrip1);
             this.Controls.Add(this.layersTreeView);
