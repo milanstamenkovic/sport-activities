@@ -115,19 +115,9 @@ namespace SportActivities
             return layers;
         }
 
-        private void mapVariableLayerToolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void mapBox_MouseMove(GeoAPI.Geometries.Coordinate worldPos, MouseEventArgs imagePos)
         {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void mapQueryToolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
+            labelMouseCoords.Text = worldPos.X + ", " + worldPos.Y;
         }
 
         private void layersTreeView_AfterSelect(object sender, TreeViewEventArgs e)

@@ -31,6 +31,8 @@
             this.mapBox = new SharpMap.Forms.MapBox();
             this.layersTreeView = new System.Windows.Forms.TreeView();
             this.mapCheckBox = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.labelMouseCoords = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // mapBox
@@ -51,6 +53,7 @@
             this.mapBox.TabIndex = 0;
             this.mapBox.Text = "mapBox1";
             this.mapBox.WheelZoomMagnitude = -2D;
+            this.mapBox.MouseMove += new SharpMap.Forms.MapBox.MouseEventHandler(this.mapBox_MouseMove);
             // 
             // layersTreeView
             // 
@@ -79,12 +82,33 @@
             this.mapCheckBox.UseVisualStyleBackColor = true;
             this.mapCheckBox.CheckedChanged += new System.EventHandler(this.mapCheckBox_CheckedChanged);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(13, 407);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(61, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Koordinate:";
+            // 
+            // labelMouseCoords
+            // 
+            this.labelMouseCoords.AutoSize = true;
+            this.labelMouseCoords.Location = new System.Drawing.Point(13, 429);
+            this.labelMouseCoords.Name = "labelMouseCoords";
+            this.labelMouseCoords.Size = new System.Drawing.Size(27, 13);
+            this.labelMouseCoords.TabIndex = 5;
+            this.labelMouseCoords.Text = "N/A";
+            // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1096, 742);
             this.Controls.Add(this.mapCheckBox);
+            this.ClientSize = new System.Drawing.Size(1096, 751);
+            this.Controls.Add(this.labelMouseCoords);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.layersTreeView);
             this.Controls.Add(this.mapBox);
             this.Name = "MapForm";
@@ -99,6 +123,8 @@
         private SharpMap.Forms.MapBox mapBox;
         private System.Windows.Forms.TreeView layersTreeView;
         private System.Windows.Forms.CheckBox mapCheckBox;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelMouseCoords;
     }
 }
 
