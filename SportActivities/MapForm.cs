@@ -111,16 +111,16 @@ namespace SportActivities
         private void mapVariableLayerToolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
+        } 
 
         private void mapQueryToolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
+        }
+
+        private void mapBox_MouseMove(GeoAPI.Geometries.Coordinate worldPos, MouseEventArgs imagePos)
+        {
+            labelMouseCoords.Text = worldPos.X + ", " + worldPos.Y;
         }
     }
 }
