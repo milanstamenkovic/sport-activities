@@ -33,6 +33,7 @@
             this.mapCheckBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.labelMouseCoords = new System.Windows.Forms.Label();
+            this.btnShowLabels = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // mapBox
@@ -100,13 +101,23 @@
             this.labelMouseCoords.TabIndex = 5;
             this.labelMouseCoords.Text = "N/A";
             // 
+            // btnShowLabels
+            // 
+            this.btnShowLabels.Location = new System.Drawing.Point(16, 457);
+            this.btnShowLabels.Name = "btnShowLabels";
+            this.btnShowLabels.Size = new System.Drawing.Size(99, 23);
+            this.btnShowLabels.TabIndex = 6;
+            this.btnShowLabels.Text = "Prikaži labele";
+            this.btnShowLabels.UseVisualStyleBackColor = true;
+            this.btnShowLabels.Click += new System.EventHandler(this.btnShowLabels_Click);
+            // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1096, 742);
-            this.Controls.Add(this.mapCheckBox);
             this.ClientSize = new System.Drawing.Size(1096, 751);
+            this.Controls.Add(this.btnShowLabels);
+            this.Controls.Add(this.mapCheckBox);
             this.Controls.Add(this.labelMouseCoords);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.layersTreeView);
@@ -125,6 +136,7 @@
         private System.Windows.Forms.CheckBox mapCheckBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelMouseCoords;
+        private System.Windows.Forms.Button btnShowLabels;
     }
 }
 
