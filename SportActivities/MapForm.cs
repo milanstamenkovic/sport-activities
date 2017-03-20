@@ -2,6 +2,7 @@
 using Npgsql;
 using ProjNet.CoordinateSystems.Transformations; 
 using SharpMap.Layers;
+using SharpMap.Forms;
 using System;
 using System.Collections.Generic; 
 using System.Configuration; 
@@ -266,9 +267,23 @@ namespace SportActivities
             labelLayer.Style.CollisionDetection = true;
             labelLayer.Style.CollisionBuffer = new SizeF(20, 20);
             labelLayer.MultipartGeometryBehaviour = LabelLayer.MultipartGeometryBehaviourEnum.Largest;
-            labelLayer.Style.Font = new System.Drawing.Font(FontFamily.GenericSansSerif, 10);
+            labelLayer.Style.Font = new Font(FontFamily.GenericSansSerif, 10);
 
             return labelLayer;
+        }
+
+        private void panBtn_Click(object sender, EventArgs e)
+        {
+            if (panBtn.BackColor == SystemColors.Control)
+            {
+                panBtn.BackColor = SystemColors.ActiveBorder;
+                mapBox.ActiveTool = MapBox.Tools.Pan;
+            }
+            else
+            {
+                panBtn.BackColor = SystemColors.Control;
+                mapBox.ActiveTool = MapBox.Tools.None;
+            }
         }
     }
 }
