@@ -28,19 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.mapBox = new SharpMap.Forms.MapBox();
             this.layersTreeView = new System.Windows.Forms.TreeView();
             this.mapCheckBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.labelMouseCoords = new System.Windows.Forms.Label();
-            this.mapDigitizeGeometriesToolStrip1 = new SharpMap.Forms.ToolBar.MapDigitizeGeometriesToolStrip(this.components);
+            this.btnShowLabels = new System.Windows.Forms.Button();
+            this.panBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // mapBox
             // 
             this.mapBox.ActiveTool = SharpMap.Forms.MapBox.Tools.None;
-            this.mapBox.BackColor = System.Drawing.Color.White;
+            this.mapBox.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.mapBox.Cursor = System.Windows.Forms.Cursors.Default;
             this.mapBox.FineZoomFactor = 10D;
             this.mapBox.Location = new System.Drawing.Point(266, 50);
@@ -104,29 +104,41 @@
             this.labelMouseCoords.TabIndex = 5;
             this.labelMouseCoords.Text = "N/A";
             // 
-            // mapDigitizeGeometriesToolStrip1
+            // btnShowLabels
             // 
-            this.mapDigitizeGeometriesToolStrip1.Enabled = false;
-            this.mapDigitizeGeometriesToolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.mapDigitizeGeometriesToolStrip1.MapControl = null;
-            this.mapDigitizeGeometriesToolStrip1.Name = "mapDigitizeGeometriesToolStrip1";
-            this.mapDigitizeGeometriesToolStrip1.Size = new System.Drawing.Size(1096, 25);
-            this.mapDigitizeGeometriesToolStrip1.TabIndex = 6;
-            this.mapDigitizeGeometriesToolStrip1.Text = "mapDigitizeGeometriesToolStrip1";
+            this.btnShowLabels.Location = new System.Drawing.Point(16, 457);
+            this.btnShowLabels.Name = "btnShowLabels";
+            this.btnShowLabels.Size = new System.Drawing.Size(99, 23);
+            this.btnShowLabels.TabIndex = 6;
+            this.btnShowLabels.Text = "Prikaži labele";
+            this.btnShowLabels.UseVisualStyleBackColor = true;
+            this.btnShowLabels.Click += new System.EventHandler(this.btnShowLabels_Click);
+            // 
+            // panBtn
+            // 
+            this.panBtn.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.panBtn.Location = new System.Drawing.Point(13, 12);
+            this.panBtn.Name = "panBtn";
+            this.panBtn.Size = new System.Drawing.Size(75, 23);
+            this.panBtn.TabIndex = 7;
+            this.panBtn.Text = "Pan";
+            this.panBtn.UseVisualStyleBackColor = false;
+            this.panBtn.Click += new System.EventHandler(this.panBtn_Click);
             // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1096, 751);
-            this.Controls.Add(this.mapDigitizeGeometriesToolStrip1);
+            this.Controls.Add(this.panBtn);
+            this.Controls.Add(this.btnShowLabels);
             this.Controls.Add(this.mapCheckBox);
             this.Controls.Add(this.labelMouseCoords);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.layersTreeView);
             this.Controls.Add(this.mapBox);
             this.Name = "MapForm";
-            this.Text = "Form1";
+            this.Text = "Sportske Aktivnosti";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -139,7 +151,8 @@
         private System.Windows.Forms.CheckBox mapCheckBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelMouseCoords;
-        private SharpMap.Forms.ToolBar.MapDigitizeGeometriesToolStrip mapDigitizeGeometriesToolStrip1;
+        private System.Windows.Forms.Button btnShowLabels;
+        private System.Windows.Forms.Button panBtn;
     }
 }
 
