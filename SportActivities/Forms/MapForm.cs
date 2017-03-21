@@ -1,7 +1,9 @@
 ﻿using GeoAPI.CoordinateSystems.Transformations;
+using GeoAPI.Geometries;
 using Npgsql;
 using ProjNet.CoordinateSystems.Transformations;
 using SharpMap;
+using SharpMap.Data;
 using SharpMap.Layers;
 using System;
 using System.Collections.Generic;
@@ -62,6 +64,7 @@ namespace SportActivities
             {
                 if (!record.TableName.Equals("putevi") && !record.TableName.Equals("zgrade"))
                 {
+
                     VectorLayer layer = new VectorLayer(record.TableName);
                     layer.DataSource = new SharpMap.Data.Providers.PostGIS(connectionParams, record.TableName, "gid");
                     layer.CoordinateTransformation = transfCoord;
@@ -81,7 +84,9 @@ namespace SportActivities
             foreach(VectorLayer layer in layers.Values)
             {
                 nodes[i] = new TreeNode(layer.LayerName);
-                nodes[i++].Checked = false;
+                nodes[i].Checked = false;
+
+                i++;
             }
 
             layersTreeView.Nodes.AddRange(nodes);
@@ -193,6 +198,57 @@ namespace SportActivities
 
             mapBox.Refresh();
             mapBox.Invalidate();
+        }
+
+        private void layersTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            LayerSettings layerSettingsForm = new LayerSettings(layers[e.Node.Text]);
+            layerSettingsForm.Show();
+        }
+
+        public List<object> GetAllDistinctValues(string tableName, string columnName)
+        {
+            List<object> values = new List<object>();
+
+            NpgsqlConnection conn = new NpgsqlConnection(connectionParams);
+
+            using (conn)
+            {
+                conn.Open();
+
+                try
+                {
+                    using (NpgsqlCommand command = new NpgsqlCommand("select distinct " + columnName + " from " + tableName + ";", conn))
+                    {
+                        NpgsqlDataReader reader = command.ExecuteReader();
+                        values = new List<object>();
+                        while (reader.Read())
+                        {
+                            values.Add(reader[0]);
+                        }
+                    }
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            }
+
+            return values;
+        }
+
+        private void mapBox_MouseClick(object sender, MouseEventArgs e)
+        {
+
+            Coordinate worldPos = mapBox.Map.ImageToWorld(new PointF(e.X, e.Y));
+            FeatureDataSet ds = new FeatureDataSet();
+
+            foreach (VectorLayer layer in mapBox.Map.Layers)
+            {
+                //layer.
+                if (layer.IsQueryEnabled)
+                    layer.ExecuteIntersectionQuery(new Envelope(worldPos), ds);
+            }
         }
     }
 }

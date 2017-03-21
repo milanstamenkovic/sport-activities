@@ -147,19 +147,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComboboxItem.cs" />
     <Compile Include="GdalConfiguration.cs" />
     <Compile Include="GdalNativeConfiguration.cs" />
     <Compile Include="LayerManager.cs" />
     <Compile Include="LayerRecord.cs" />
-    <Compile Include="MapForm.cs">
+    <Compile Include="Forms\LayerSettings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MapForm.Designer.cs">
+    <Compile Include="Forms\LayerSettings.Designer.cs">
+      <DependentUpon>LayerSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MapForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MapForm.Designer.cs">
       <DependentUpon>MapForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="MapForm.resx">
+    <EmbeddedResource Include="Forms\LayerSettings.resx">
+      <DependentUpon>LayerSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MapForm.resx">
       <DependentUpon>MapForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

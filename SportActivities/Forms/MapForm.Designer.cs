@@ -28,11 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.mapBox = new SharpMap.Forms.MapBox();
             this.layersTreeView = new System.Windows.Forms.TreeView();
             this.mapCheckBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.labelMouseCoords = new System.Windows.Forms.Label();
+            this.mapDigitizeGeometriesToolStrip1 = new SharpMap.Forms.ToolBar.MapDigitizeGeometriesToolStrip(this.components);
             this.SuspendLayout();
             // 
             // mapBox
@@ -54,6 +56,7 @@
             this.mapBox.Text = "mapBox1";
             this.mapBox.WheelZoomMagnitude = -2D;
             this.mapBox.MouseMove += new SharpMap.Forms.MapBox.MouseEventHandler(this.mapBox_MouseMove);
+            this.mapBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mapBox_MouseClick);
             // 
             // layersTreeView
             // 
@@ -66,6 +69,7 @@
             this.layersTreeView.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.layersTreeView_AfterCheck);
             this.layersTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.layersTreeView_ItemDrag);
             this.layersTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.layersTreeView_AfterSelect);
+            this.layersTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.layersTreeView_NodeMouseDoubleClick);
             this.layersTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.layersTreeView_DragDrop);
             this.layersTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.layersTreeView_DragEnter);
             // 
@@ -100,13 +104,23 @@
             this.labelMouseCoords.TabIndex = 5;
             this.labelMouseCoords.Text = "N/A";
             // 
+            // mapDigitizeGeometriesToolStrip1
+            // 
+            this.mapDigitizeGeometriesToolStrip1.Enabled = false;
+            this.mapDigitizeGeometriesToolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.mapDigitizeGeometriesToolStrip1.MapControl = null;
+            this.mapDigitizeGeometriesToolStrip1.Name = "mapDigitizeGeometriesToolStrip1";
+            this.mapDigitizeGeometriesToolStrip1.Size = new System.Drawing.Size(1096, 25);
+            this.mapDigitizeGeometriesToolStrip1.TabIndex = 6;
+            this.mapDigitizeGeometriesToolStrip1.Text = "mapDigitizeGeometriesToolStrip1";
+            // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1096, 742);
-            this.Controls.Add(this.mapCheckBox);
             this.ClientSize = new System.Drawing.Size(1096, 751);
+            this.Controls.Add(this.mapDigitizeGeometriesToolStrip1);
+            this.Controls.Add(this.mapCheckBox);
             this.Controls.Add(this.labelMouseCoords);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.layersTreeView);
@@ -125,6 +139,7 @@
         private System.Windows.Forms.CheckBox mapCheckBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelMouseCoords;
+        private SharpMap.Forms.ToolBar.MapDigitizeGeometriesToolStrip mapDigitizeGeometriesToolStrip1;
     }
 }
 
