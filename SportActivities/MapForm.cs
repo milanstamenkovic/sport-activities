@@ -115,8 +115,7 @@ namespace SportActivities
         {
             IProjectedCoordinateSystem utmProj = createUtmProjection(34);
             IGeographicCoordinateSystem geoCs = utmProj.GeographicCoordinateSystem;
-            CoordinateTransformationFactory ctFac = new CoordinateTransformationFactory();
-            ICoordinateTransformation transform = ctFac.CreateFromCoordinateSystems(geoCs, utmProj);
+            ICoordinateTransformation transform = _ctFact.CreateFromCoordinateSystems(geoCs, utmProj);
             double[] coordsGeo = new double[2];
             double[] coordsUtm;
             coordsGeo[0] = worldPos.X;
@@ -231,8 +230,8 @@ namespace SportActivities
             {
                 Console.WriteLine(attribute);
                 LabelLayer labelLayer = getLabelLayer();
-                labelLayer.CoordinateTransformation = _ctFact.CreateFromCoordinateSystems(ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84, ProjectedCoordinateSystem.WebMercator);
-                labelLayer.ReverseCoordinateTransformation = _ctFact.CreateFromCoordinateSystems(ProjectedCoordinateSystem.WebMercator, ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84);
+                labelLayer.CoordinateTransformation = transfCoord;
+                labelLayer.ReverseCoordinateTransformation = reverseTransfCoord;
                 mapBox.Map.Layers.Add(labelLayer);
                 mapBox.Refresh(); 
             }
@@ -272,18 +271,57 @@ namespace SportActivities
             return labelLayer;
         }
 
-        private void panBtn_Click(object sender, EventArgs e)
+        private void mapBox_GeometryDefined(GeoAPI.Geometries.IGeometry geometry)
         {
-            if (panBtn.BackColor == SystemColors.Control)
+            //foreach (VectorLayer layer in layers.Values)
+            //{
+            //    if(layer.IsQueryEnabled)
+            //        layer.
+            //}
+        }
+
+        private void toolsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            ToolStripMenuItem toolStripMenu = sender as ToolStripMenuItem;
+
+            foreach(ToolStripMenuItem item in toolStripMenu.DropDownItems)
+                item.Checked = false;
+
+            activeToolLabel.Text = e.ClickedItem.Text;
+            ((ToolStripMenuItem)e.ClickedItem).Checked = true;
+
+            mapBox.ActiveTool = getTool(Int32.Parse((string)e.ClickedItem.Tag));
+        }
+
+        private MapBox.Tools getTool(int value)
+        {
+            switch (value)
             {
-                panBtn.BackColor = SystemColors.ActiveBorder;
-                mapBox.ActiveTool = MapBox.Tools.Pan;
+                case 0:
+                    return MapBox.Tools.Pan;
+                case 1:
+                    return MapBox.Tools.ZoomIn;
+                case 2:
+                    return MapBox.Tools.ZoomOut;
+                case 3:
+                    return MapBox.Tools.QueryBox;
+                case 5:
+                    return MapBox.Tools.ZoomWindow;
+                case 6:
+                    return MapBox.Tools.DrawPoint;
+                case 7:
+                    return MapBox.Tools.DrawLine;
+                case 8:
+                    return MapBox.Tools.DrawPolygon;
+                default:
+                    return MapBox.Tools.None;
+
             }
-            else
-            {
-                panBtn.BackColor = SystemColors.Control;
-                mapBox.ActiveTool = MapBox.Tools.None;
-            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }
