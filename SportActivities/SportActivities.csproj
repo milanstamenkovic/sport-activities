@@ -147,6 +147,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnumUtil.cs" />
     <Compile Include="GdalConfiguration.cs" />
     <Compile Include="GdalNativeConfiguration.cs" />
     <Compile Include="LayerManager.cs" />

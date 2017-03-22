@@ -1,23 +1,21 @@
 ﻿using GeoAPI.CoordinateSystems.Transformations;
 using Npgsql;
-using ProjNet.CoordinateSystems.Transformations;
-using SharpMap;
+using ProjNet.CoordinateSystems.Transformations; 
 using SharpMap.Layers;
+using SharpMap.Forms;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic; 
+using System.Configuration; 
+using System.Drawing; 
 using System.Windows.Forms;
+using GeoAPI.CoordinateSystems;
+using ProjNet.CoordinateSystems;
 
 namespace SportActivities
 {
     public partial class MapForm : Form
     {
+        private ConnectionStringSettingsCollection connectionStrings;
         private Dictionary<string, VectorLayer> layers;
         private List<LayerRecord> layerRecords;
 
@@ -31,17 +29,16 @@ namespace SportActivities
         {
             InitializeComponent();
 
-            connectionParams =
-                         System.Configuration.ConfigurationManager.
-                         ConnectionStrings["PostgreSQL"].ConnectionString;
+            connectionStrings = ConfigurationManager.ConnectionStrings;
+
+            connectionParams = connectionStrings["PostgreSQL"].ConnectionString;
 
             layers = new Dictionary<string, VectorLayer>();
             layerRecords = GetAllLayers();
 
             _ctFact = new CoordinateTransformationFactory();
-            transfCoord = _ctFact.CreateFromCoordinateSystems(ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84, ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WebMercator);
-            reverseTransfCoord = _ctFact.CreateFromCoordinateSystems(ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WebMercator, ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84);
-
+            transfCoord = _ctFact.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, ProjectedCoordinateSystem.WebMercator);
+            reverseTransfCoord = _ctFact.CreateFromCoordinateSystems(ProjectedCoordinateSystem.WebMercator, GeographicCoordinateSystem.WGS84);
 
             populateCollection();
 
@@ -71,7 +68,6 @@ namespace SportActivities
                 }
             }
         }
-
 
         private void AddToTreeView()
         {
@@ -117,7 +113,40 @@ namespace SportActivities
 
         private void mapBox_MouseMove(GeoAPI.Geometries.Coordinate worldPos, MouseEventArgs imagePos)
         {
+            IProjectedCoordinateSystem utmProj = createUtmProjection(34);
+            IGeographicCoordinateSystem geoCs = utmProj.GeographicCoordinateSystem;
+            ICoordinateTransformation transform = _ctFact.CreateFromCoordinateSystems(geoCs, utmProj);
+            double[] coordsGeo = new double[2];
+            double[] coordsUtm;
+            coordsGeo[0] = worldPos.X;
+            coordsGeo[1] = worldPos.Y;
+            coordsUtm = transform.MathTransform.Transform(coordsGeo);
+            worldPos.X = coordsUtm[0];
+            worldPos.Y = coordsUtm[1];
+
             labelMouseCoords.Text = worldPos.X + ", " + worldPos.Y;
+        } 
+
+        private IProjectedCoordinateSystem createUtmProjection(int utmZone)
+        {
+            CoordinateSystemFactory cFac = new CoordinateSystemFactory();
+            IEllipsoid elipsoid = cFac.CreateFlattenedSphere("WGS 84", 6378137, 298.257, LinearUnit.Metre);
+            IHorizontalDatum datum = cFac.CreateHorizontalDatum("WGS_1984", DatumType.HD_Geocentric, elipsoid, null);
+            IGeographicCoordinateSystem gcs = cFac.CreateGeographicCoordinateSystem("WGS 84", AngularUnit.Degrees, datum,
+                PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East), new AxisInfo("Lat", AxisOrientationEnum.North));
+
+            List<ProjectionParameter> parameters = new List<ProjectionParameter>();
+
+            parameters.Add(new ProjectionParameter("latitude_of_origin", 0.0));
+            parameters.Add(new ProjectionParameter("central_meridian", -183 + 6 * utmZone));
+            parameters.Add(new ProjectionParameter("scale_factor", 0.9996));
+            parameters.Add(new ProjectionParameter("false_easting", 500000));
+            parameters.Add(new ProjectionParameter("false_northing", 0.0));
+            IProjection projection = cFac.CreateProjection("Transverse Mercator", "Transverse Mercator", parameters);
+
+
+            return cFac.CreateProjectedCoordinateSystem("WGS 84 / UTM zone " + utmZone + "N", gcs, projection, LinearUnit.Metre,
+                new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
         }
 
         private void layersTreeView_AfterSelect(object sender, TreeViewEventArgs e)
@@ -193,6 +222,106 @@ namespace SportActivities
 
             mapBox.Refresh();
             mapBox.Invalidate();
+        }
+
+        private void btnShowLabels_Click(object sender, EventArgs e)
+        {
+            foreach (string attribute in getAllAttributesForLayer("zatvoreni"))
+            {
+                Console.WriteLine(attribute);
+                LabelLayer labelLayer = getLabelLayer();
+                labelLayer.CoordinateTransformation = transfCoord;
+                labelLayer.ReverseCoordinateTransformation = reverseTransfCoord;
+                mapBox.Map.Layers.Add(labelLayer);
+                mapBox.Refresh(); 
+            }
+        }
+
+        private List<string> getAllAttributesForLayer(string layer)
+        {
+            List<string> attributes;
+
+            using (NpgsqlConnection conn = new NpgsqlConnection(connectionStrings["PostgreSQL"].ConnectionString))
+            {
+                conn.Open();
+
+                using (NpgsqlCommand command = new NpgsqlCommand("select column_name from information_schema.columns where table_name='" + layer + "';", conn))
+                {
+                    NpgsqlDataReader reader = command.ExecuteReader();
+                    attributes = new List<string>();
+                    while (reader.Read()) {
+                        attributes.Add(reader[0].ToString());
+                    }
+                }
+            }
+
+            return attributes;
+        }
+
+        private LabelLayer getLabelLayer()
+        {
+            LabelLayer labelLayer = new LabelLayer("Test label layer");
+            labelLayer.DataSource = layers["zatvoreni"].DataSource;
+            labelLayer.LabelColumn = "sport";
+            labelLayer.Style.CollisionDetection = true;
+            labelLayer.Style.CollisionBuffer = new SizeF(20, 20);
+            labelLayer.MultipartGeometryBehaviour = LabelLayer.MultipartGeometryBehaviourEnum.Largest;
+            labelLayer.Style.Font = new Font(FontFamily.GenericSansSerif, 10);
+
+            return labelLayer;
+        }
+
+        private void mapBox_GeometryDefined(GeoAPI.Geometries.IGeometry geometry)
+        {
+            //foreach (VectorLayer layer in layers.Values)
+            //{
+            //    if(layer.IsQueryEnabled)
+            //        layer.
+            //}
+        }
+
+        private void toolsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            ToolStripMenuItem toolStripMenu = sender as ToolStripMenuItem;
+
+            foreach(ToolStripMenuItem item in toolStripMenu.DropDownItems)
+                item.Checked = false;
+
+            activeToolLabel.Text = e.ClickedItem.Text;
+            ((ToolStripMenuItem)e.ClickedItem).Checked = true;
+
+            mapBox.ActiveTool = getTool(Int32.Parse((string)e.ClickedItem.Tag));
+        }
+
+        private MapBox.Tools getTool(int value)
+        {
+            switch (value)
+            {
+                case 0:
+                    return MapBox.Tools.Pan;
+                case 1:
+                    return MapBox.Tools.ZoomIn;
+                case 2:
+                    return MapBox.Tools.ZoomOut;
+                case 3:
+                    return MapBox.Tools.QueryBox;
+                case 5:
+                    return MapBox.Tools.ZoomWindow;
+                case 6:
+                    return MapBox.Tools.DrawPoint;
+                case 7:
+                    return MapBox.Tools.DrawLine;
+                case 8:
+                    return MapBox.Tools.DrawPolygon;
+                default:
+                    return MapBox.Tools.None;
+
+            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

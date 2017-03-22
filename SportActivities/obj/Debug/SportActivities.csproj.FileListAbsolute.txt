@@ -84,6 +84,7 @@ C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivi
 C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivities\bin\Debug\fr\Npgsql.resources.dll
 C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivities\bin\Debug\ja\Npgsql.resources.dll
 C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivities\bin\Debug\zh-CN\Npgsql.resources.dll
+C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivities\obj\Debug\SportActivities.csprojResolveAssemblyReference.cache
 C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivities\obj\Debug\SportActivities.MapForm.resources
 C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivities\obj\Debug\SportActivities.Properties.Resources.resources
 C:\Users\Milan\documents\visual studio 2015\Projects\SportActivities\SportActivities\obj\Debug\SportActivities.csproj.GenerateResource.Cache
