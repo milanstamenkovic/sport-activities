@@ -36,19 +36,19 @@
             this.btnShowLabels = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zoomInToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zoomOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zoomPolygonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.drawPointToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.drawLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.drawPolygonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.queryBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label2 = new System.Windows.Forms.Label();
             this.activeToolLabel = new System.Windows.Forms.Label();
-            this.drawPolygonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.drawLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.drawPointToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.queryBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -84,6 +84,7 @@
             this.layersTreeView.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.layersTreeView_AfterCheck);
             this.layersTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.layersTreeView_ItemDrag);
             this.layersTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.layersTreeView_AfterSelect);
+            this.layersTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.layersTreeView_NodeMouseDoubleClick);
             this.layersTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.layersTreeView_DragDrop);
             this.layersTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.layersTreeView_DragEnter);
             // 
@@ -147,6 +148,13 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.Checked = true;
@@ -165,6 +173,15 @@
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
             this.toolsToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolsToolStripMenuItem_DropDownItemClicked);
+            // 
+            // noneToolStripMenuItem
+            // 
+            this.noneToolStripMenuItem.Checked = true;
+            this.noneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.noneToolStripMenuItem.Name = "noneToolStripMenuItem";
+            this.noneToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.noneToolStripMenuItem.Tag = "9";
+            this.noneToolStripMenuItem.Text = "None";
             // 
             // panToolStripMenuItem
             // 
@@ -194,21 +211,33 @@
             this.zoomPolygonToolStripMenuItem.Tag = "5";
             this.zoomPolygonToolStripMenuItem.Text = "Zoom Window";
             // 
-            // noneToolStripMenuItem
+            // drawPointToolStripMenuItem
             // 
-            this.noneToolStripMenuItem.Checked = true;
-            this.noneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.noneToolStripMenuItem.Name = "noneToolStripMenuItem";
-            this.noneToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-            this.noneToolStripMenuItem.Tag = "9";
-            this.noneToolStripMenuItem.Text = "None";
+            this.drawPointToolStripMenuItem.Name = "drawPointToolStripMenuItem";
+            this.drawPointToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.drawPointToolStripMenuItem.Tag = "6";
+            this.drawPointToolStripMenuItem.Text = "Draw Point";
             // 
-            // exitToolStripMenuItem
+            // drawLineToolStripMenuItem
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.drawLineToolStripMenuItem.Name = "drawLineToolStripMenuItem";
+            this.drawLineToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.drawLineToolStripMenuItem.Tag = "7";
+            this.drawLineToolStripMenuItem.Text = "Draw Line";
+            // 
+            // drawPolygonToolStripMenuItem
+            // 
+            this.drawPolygonToolStripMenuItem.Name = "drawPolygonToolStripMenuItem";
+            this.drawPolygonToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.drawPolygonToolStripMenuItem.Tag = "8";
+            this.drawPolygonToolStripMenuItem.Text = "Draw Polygon";
+            // 
+            // queryBoxToolStripMenuItem
+            // 
+            this.queryBoxToolStripMenuItem.Name = "queryBoxToolStripMenuItem";
+            this.queryBoxToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.queryBoxToolStripMenuItem.Tag = "3";
+            this.queryBoxToolStripMenuItem.Text = "Query Box";
             // 
             // label2
             // 
@@ -233,39 +262,11 @@
             this.activeToolLabel.TabIndex = 11;
             this.activeToolLabel.Text = "None";
             // 
-            // drawPolygonToolStripMenuItem
-            // 
-            this.drawPolygonToolStripMenuItem.Name = "drawPolygonToolStripMenuItem";
-            this.drawPolygonToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-            this.drawPolygonToolStripMenuItem.Tag = "8";
-            this.drawPolygonToolStripMenuItem.Text = "Draw Polygon";
-            // 
-            // drawLineToolStripMenuItem
-            // 
-            this.drawLineToolStripMenuItem.Name = "drawLineToolStripMenuItem";
-            this.drawLineToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-            this.drawLineToolStripMenuItem.Tag = "7";
-            this.drawLineToolStripMenuItem.Text = "Draw Line";
-            // 
-            // drawPointToolStripMenuItem
-            // 
-            this.drawPointToolStripMenuItem.Name = "drawPointToolStripMenuItem";
-            this.drawPointToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-            this.drawPointToolStripMenuItem.Tag = "6";
-            this.drawPointToolStripMenuItem.Text = "Draw Point";
-            // 
-            // queryBoxToolStripMenuItem
-            // 
-            this.queryBoxToolStripMenuItem.Name = "queryBoxToolStripMenuItem";
-            this.queryBoxToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-            this.queryBoxToolStripMenuItem.Tag = "3";
-            this.queryBoxToolStripMenuItem.Text = "Query Box";
-            // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1096, 751);
+            this.ClientSize = new System.Drawing.Size(1096, 742);
             this.Controls.Add(this.activeToolLabel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnShowLabels);

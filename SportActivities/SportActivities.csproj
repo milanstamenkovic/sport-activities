@@ -147,11 +147,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComboboxItem.cs" />
     <Compile Include="EnumUtil.cs" />
     <Compile Include="GdalConfiguration.cs" />
     <Compile Include="GdalNativeConfiguration.cs" />
     <Compile Include="LayerManager.cs" />
     <Compile Include="LayerRecord.cs" />
+    <Compile Include="LayerSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LayerSettings.Designer.cs">
+      <DependentUpon>LayerSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="MapForm.cs">
       <SubType>Form</SubType>
     </Compile>

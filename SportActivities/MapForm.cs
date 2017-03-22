@@ -323,5 +323,11 @@ namespace SportActivities
         {
             Close();
         }
+
+        private void layersTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            LayerSettings layerSettingsForm = new LayerSettings(layers[e.Node.Text]);
+            layerSettingsForm.Show();
+        }
     }
 }
