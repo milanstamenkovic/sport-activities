@@ -1,26 +1,23 @@
-﻿using SharpMap.Data;
-using SharpMap.Layers;
+﻿using SharpMap.Data; 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using SportActivities.DataModels; 
 
 namespace SportActivities
 {
     public partial class LayerSettings : Form
     {
-        VectorLayer layer;
-        FeatureDataSet featureData;
+        private LayerModel layer;
+        private FeatureDataSet featureData;
+        private DataManagement dataManagement;
 
-        public LayerSettings(VectorLayer layer)
+        public LayerSettings(ref LayerModel layer)
         {
             InitializeComponent();
 
+            dataManagement = new DataManagement();
             this.layer = layer;
             getFeatureData();
             initLayerLabelComboBox();
@@ -35,8 +32,10 @@ namespace SportActivities
                 ComboboxItem item = ComboboxItem.getInstance();
                 item.Value = columns[i].ColumnName;
                 item.Text = beautify((string)item.Value);
-                layerLabelCombobox.Items.Add(item);
+                comboboxLabel.Items.Add(item);
             }
+            
+            comboboxLabel.SelectedIndex = comboboxLabel.FindStringExact(layer.labelLayer.LabelColumn);
         }
 
         private string beautify(string param)
@@ -50,9 +49,9 @@ namespace SportActivities
         private void getFeatureData()
         {
             featureData = new FeatureDataSet();
-            if (layer.IsQueryEnabled)
+            if (layer.vectorLayer.IsQueryEnabled)
             {
-                layer.ExecuteIntersectionQuery(layer.DataSource.GetExtents(), featureData);
+                layer.vectorLayer.ExecuteIntersectionQuery(layer.vectorLayer.DataSource.GetExtents(), featureData);
             }
             else
             {
@@ -60,5 +59,15 @@ namespace SportActivities
             }
         }
 
+        private void buttonCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void buttonApply_Click(object sender, EventArgs e)
+        {
+            layer.labelLayer.LabelColumn = comboboxLabel.SelectedItem.ToString();
+            Close();
+        }
     }
 }

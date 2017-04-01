@@ -55,6 +55,9 @@
             // mapBox
             // 
             this.mapBox.ActiveTool = SharpMap.Forms.MapBox.Tools.None;
+            this.mapBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.mapBox.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.mapBox.Cursor = System.Windows.Forms.Cursors.Default;
             this.mapBox.FineZoomFactor = 10D;
@@ -95,9 +98,9 @@
             this.mapCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mapCheckBox.Location = new System.Drawing.Point(13, 50);
             this.mapCheckBox.Name = "mapCheckBox";
-            this.mapCheckBox.Size = new System.Drawing.Size(53, 17);
+            this.mapCheckBox.Size = new System.Drawing.Size(47, 17);
             this.mapCheckBox.TabIndex = 2;
-            this.mapCheckBox.Text = "Mapa";
+            this.mapCheckBox.Text = "Map";
             this.mapCheckBox.UseVisualStyleBackColor = true;
             this.mapCheckBox.CheckedChanged += new System.EventHandler(this.mapCheckBox_CheckedChanged);
             // 
@@ -106,9 +109,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 407);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(61, 13);
+            this.label1.Size = new System.Drawing.Size(66, 13);
             this.label1.TabIndex = 4;
-            this.label1.Text = "Koordinate:";
+            this.label1.Text = "Coordinates:";
             // 
             // labelMouseCoords
             // 
@@ -125,7 +128,7 @@
             this.btnShowLabels.Name = "btnShowLabels";
             this.btnShowLabels.Size = new System.Drawing.Size(99, 23);
             this.btnShowLabels.TabIndex = 6;
-            this.btnShowLabels.Text = "Prikaži labele";
+            this.btnShowLabels.Text = "Show labels";
             this.btnShowLabels.UseVisualStyleBackColor = true;
             this.btnShowLabels.Click += new System.EventHandler(this.btnShowLabels_Click);
             // 
@@ -170,7 +173,7 @@
             this.drawPolygonToolStripMenuItem,
             this.queryBoxToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
             this.toolsToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolsToolStripMenuItem_DropDownItemClicked);
             // 
@@ -280,7 +283,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MapForm";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.Text = "Sportske Aktivnosti";
+            this.Text = "Sport activities";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);

@@ -1,46 +1,35 @@
 ﻿using GeoAPI.CoordinateSystems.Transformations;
 using Npgsql;
-using ProjNet.CoordinateSystems.Transformations; 
 using SharpMap.Layers;
 using SharpMap.Forms;
 using System;
 using System.Collections.Generic; 
-using System.Configuration; 
-using System.Drawing; 
-using System.Windows.Forms;
+using System.Drawing;
+using System.Windows.Forms; 
 using GeoAPI.CoordinateSystems;
 using ProjNet.CoordinateSystems;
+using SportActivities.DataModels;
 
 namespace SportActivities
 {
     public partial class MapForm : Form
     {
-        private ConnectionStringSettingsCollection connectionStrings;
-        private Dictionary<string, VectorLayer> layers;
+         
+        private Dictionary<string, LayerModel> layers;
         private List<LayerRecord> layerRecords;
-
-        private String connectionParams;
-
-        private CoordinateTransformationFactory _ctFact;
-        public ICoordinateTransformation transfCoord;
-        public ICoordinateTransformation reverseTransfCoord;
+        private DataManagement dataManagement;
+        private bool showLabels;
 
         public MapForm()
         {
             InitializeComponent();
 
-            connectionStrings = ConfigurationManager.ConnectionStrings;
+            dataManagement = new DataManagement();
 
-            connectionParams = connectionStrings["PostgreSQL"].ConnectionString;
-
-            layers = new Dictionary<string, VectorLayer>();
+            layers = new Dictionary<string, LayerModel>();
             layerRecords = GetAllLayers();
 
-            _ctFact = new CoordinateTransformationFactory();
-            transfCoord = _ctFact.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, ProjectedCoordinateSystem.WebMercator);
-            reverseTransfCoord = _ctFact.CreateFromCoordinateSystems(ProjectedCoordinateSystem.WebMercator, GeographicCoordinateSystem.WGS84);
-
-            populateCollection();
+            createVectorAndLabelInitialLayers();
 
             AddToTreeView();
 
@@ -50,21 +39,21 @@ namespace SportActivities
 
             mapBox.Refresh();
             mapBox.EnableShiftButtonDragRectangleZoom = true;
-            mapBox.ActiveTool = SharpMap.Forms.MapBox.Tools.Pan;
+            mapBox.ActiveTool = MapBox.Tools.Pan;
         }
 
-        private void populateCollection()
+        private void createVectorAndLabelInitialLayers()
         {
             foreach (LayerRecord record in layerRecords)
             {
                 if (!record.TableName.Equals("putevi") && !record.TableName.Equals("zgrade"))
                 {
-                    VectorLayer layer = new VectorLayer(record.TableName);
-                    layer.DataSource = new SharpMap.Data.Providers.PostGIS(connectionParams, record.TableName, "gid");
-                    layer.CoordinateTransformation = transfCoord;
-                    layer.ReverseCoordinateTransformation = reverseTransfCoord;
+                    VectorLayer vectorLayer = new VectorLayer(record.TableName);
+                    vectorLayer.DataSource = new SharpMap.Data.Providers.PostGIS(dataManagement.connectionParams, vectorLayer.LayerName, "gid");
+                    vectorLayer.CoordinateTransformation = dataManagement.transfCoord;
+                    vectorLayer.ReverseCoordinateTransformation = dataManagement.reverseTransfCoord; 
 
-                    layers.Add(layer.LayerName, layer);
+                    layers.Add(record.TableName, new LayerModel(vectorLayer, dataManagement.createLabelLayer(vectorLayer, "Gid")));
                 }
             }
         }
@@ -74,15 +63,15 @@ namespace SportActivities
             TreeNode[] nodes = new TreeNode[layers.Count];
 
             int i = 0;
-            foreach(VectorLayer layer in layers.Values)
+            foreach(LayerModel layer in layers.Values)
             {
-                nodes[i] = new TreeNode(layer.LayerName);
+                nodes[i] = new TreeNode(layer.vectorLayer.LayerName);
                 nodes[i++].Checked = false;
             }
 
             layersTreeView.Nodes.AddRange(nodes);
         }
-
+        
         public ILayer CreateBackgroundLayer()
         {
             return new TileLayer(new BruTile.Web.OsmTileSource(), "OSM");
@@ -91,7 +80,7 @@ namespace SportActivities
         public List<LayerRecord> GetAllLayers()
         {
             List<LayerRecord> layers;
-            using (NpgsqlConnection conn = new NpgsqlConnection(connectionParams))
+            using (NpgsqlConnection conn = new NpgsqlConnection(dataManagement.connectionParams))
             {
                 conn.Open();
 
@@ -115,7 +104,7 @@ namespace SportActivities
         {
             IProjectedCoordinateSystem utmProj = createUtmProjection(34);
             IGeographicCoordinateSystem geoCs = utmProj.GeographicCoordinateSystem;
-            ICoordinateTransformation transform = _ctFact.CreateFromCoordinateSystems(geoCs, utmProj);
+            ICoordinateTransformation transform = dataManagement.ctFact.CreateFromCoordinateSystems(geoCs, utmProj);
             double[] coordsGeo = new double[2];
             double[] coordsUtm;
             coordsGeo[0] = worldPos.X;
@@ -167,7 +156,9 @@ namespace SportActivities
                     renderActiveLayers();
                 else
                 {
-                    mapBox.Map.Layers.Remove(layers[e.Node.Text]);
+                    mapBox.Map.Layers.Remove(layers[e.Node.Text].vectorLayer);
+                    if (showLabels)
+                        mapBox.Map.Layers.Remove(layers[e.Node.Text].labelLayer);
                     mapBox.Refresh();
                 }
 
@@ -208,7 +199,12 @@ namespace SportActivities
 
             foreach(TreeNode layerNode in layersTreeView.Nodes)
                 if (layerNode.Checked)
-                    mapBox.Map.Layers.Add(layers[layerNode.Text]);
+                    mapBox.Map.Layers.Add(layers[layerNode.Text].vectorLayer);
+
+            if (showLabels)
+                foreach (TreeNode layerNode in layersTreeView.Nodes)
+                    if (layerNode.Checked)
+                        mapBox.Map.Layers.Add(layers[layerNode.Text].labelLayer);
 
             mapBox.Refresh();
         }
@@ -226,49 +222,16 @@ namespace SportActivities
 
         private void btnShowLabels_Click(object sender, EventArgs e)
         {
-            foreach (string attribute in getAllAttributesForLayer("zatvoreni"))
+            showLabels = !showLabels;
+            if (showLabels)
             {
-                Console.WriteLine(attribute);
-                LabelLayer labelLayer = getLabelLayer();
-                labelLayer.CoordinateTransformation = transfCoord;
-                labelLayer.ReverseCoordinateTransformation = reverseTransfCoord;
-                mapBox.Map.Layers.Add(labelLayer);
-                mapBox.Refresh(); 
-            }
-        }
-
-        private List<string> getAllAttributesForLayer(string layer)
-        {
-            List<string> attributes;
-
-            using (NpgsqlConnection conn = new NpgsqlConnection(connectionStrings["PostgreSQL"].ConnectionString))
+                btnShowLabels.BackColor = SystemColors.ActiveCaption;
+            } 
+            else
             {
-                conn.Open();
-
-                using (NpgsqlCommand command = new NpgsqlCommand("select column_name from information_schema.columns where table_name='" + layer + "';", conn))
-                {
-                    NpgsqlDataReader reader = command.ExecuteReader();
-                    attributes = new List<string>();
-                    while (reader.Read()) {
-                        attributes.Add(reader[0].ToString());
-                    }
-                }
+                btnShowLabels.BackColor = SystemColors.Control;
             }
-
-            return attributes;
-        }
-
-        private LabelLayer getLabelLayer()
-        {
-            LabelLayer labelLayer = new LabelLayer("Test label layer");
-            labelLayer.DataSource = layers["zatvoreni"].DataSource;
-            labelLayer.LabelColumn = "sport";
-            labelLayer.Style.CollisionDetection = true;
-            labelLayer.Style.CollisionBuffer = new SizeF(20, 20);
-            labelLayer.MultipartGeometryBehaviour = LabelLayer.MultipartGeometryBehaviourEnum.Largest;
-            labelLayer.Style.Font = new Font(FontFamily.GenericSansSerif, 10);
-
-            return labelLayer;
+            renderActiveLayers();
         }
 
         private void mapBox_GeometryDefined(GeoAPI.Geometries.IGeometry geometry)
@@ -326,7 +289,8 @@ namespace SportActivities
 
         private void layersTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            LayerSettings layerSettingsForm = new LayerSettings(layers[e.Node.Text]);
+            LayerModel layerModel = layers[e.Node.Text];
+            LayerSettings layerSettingsForm = new LayerSettings(ref layerModel);
             layerSettingsForm.Show();
         }
     }
