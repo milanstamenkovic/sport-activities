@@ -51,9 +51,10 @@ namespace SportActivities
                     VectorLayer vectorLayer = new VectorLayer(record.TableName);
                     vectorLayer.DataSource = new SharpMap.Data.Providers.PostGIS(dataManagement.connectionParams, vectorLayer.LayerName, "gid");
                     vectorLayer.CoordinateTransformation = dataManagement.transfCoord;
-                    vectorLayer.ReverseCoordinateTransformation = dataManagement.reverseTransfCoord; 
+                    vectorLayer.ReverseCoordinateTransformation = dataManagement.reverseTransfCoord;
+                    vectorLayer.Style.EnableOutline = true;
 
-                    layers.Add(record.TableName, new LayerModel(vectorLayer, dataManagement.createLabelLayer(vectorLayer, "Gid")));
+                    layers.Add(record.TableName, new LayerModel(vectorLayer, dataManagement.createLabelLayer(vectorLayer, "Gid"), record));
                 }
             }
         }
@@ -290,8 +291,8 @@ namespace SportActivities
         private void layersTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             LayerModel layerModel = layers[e.Node.Text];
-            LayerSettings layerSettingsForm = new LayerSettings(ref layerModel);
-            layerSettingsForm.Show();
+            LayerSettings layerSettingsForm = new LayerSettings(ref mapBox, ref layerModel);
+            layerSettingsForm.ShowDialog();
         }
     }
 }
