@@ -63,5 +63,40 @@ namespace SportActivities
 
             return attributes;
         }
+
+        public VectorLayer createRoutingLayer(Point start, Point end)
+        {
+            //prepare temp table
+            using (NpgsqlConnection conn = new NpgsqlConnection(connectionParams))
+            {
+                conn.Open();
+
+                using (NpgsqlCommand command = new NpgsqlCommand("drop table if exists temp_route;", conn))
+                {
+                    command.ExecuteNonQuery();
+                }
+
+                using (NpgsqlCommand command = new NpgsqlCommand("CREATE TABLE temp_route" +
+                    " AS select * from pgr_fromAtoB('ways'," + start.X + "," + start.Y + "," + end.X + "," + end.Y + ");", conn))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            //create layer
+            VectorLayer layer = new VectorLayer("RouteAtoB");
+            var postGisProvider = new SharpMap.Data.Providers.PostGIS(
+            connectionStrings["PostgreSQL"].ConnectionString, "temp_route", "geom", "seq"); 
+
+            postGisProvider.SRID = 4326;
+            layer.DataSource = postGisProvider;
+
+            layer.CoordinateTransformation = ctFact.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, ProjectedCoordinateSystem.WebMercator);
+            layer.ReverseCoordinateTransformation = ctFact.CreateFromCoordinateSystems(ProjectedCoordinateSystem.WebMercator, GeographicCoordinateSystem.WGS84);
+
+            layer.Style.Line = new Pen(Color.IndianRed, 5);
+
+            return layer;
+        }
     }
 }

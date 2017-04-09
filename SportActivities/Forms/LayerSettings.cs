@@ -11,7 +11,6 @@ namespace SportActivities
 {
     public partial class LayerSettings : Form
     {
-        //private MapForm mapForm;
         private MapBox mapBox;
         private LayerModel layer;
         private FeatureDataSet featureData;

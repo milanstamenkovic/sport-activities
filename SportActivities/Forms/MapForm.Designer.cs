@@ -49,6 +49,7 @@
             this.queryBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label2 = new System.Windows.Forms.Label();
             this.activeToolLabel = new System.Windows.Forms.Label();
+            this.btnRouting = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -265,11 +266,22 @@
             this.activeToolLabel.TabIndex = 11;
             this.activeToolLabel.Text = "None";
             // 
+            // btnRouting
+            // 
+            this.btnRouting.Location = new System.Drawing.Point(16, 504);
+            this.btnRouting.Name = "btnRouting";
+            this.btnRouting.Size = new System.Drawing.Size(99, 23);
+            this.btnRouting.TabIndex = 12;
+            this.btnRouting.Text = "Routing";
+            this.btnRouting.UseVisualStyleBackColor = true;
+            this.btnRouting.Click += new System.EventHandler(this.btnRouting_Click);
+            // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1096, 742);
+            this.Controls.Add(this.btnRouting);
             this.Controls.Add(this.activeToolLabel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnShowLabels);
@@ -314,6 +326,7 @@
         private System.Windows.Forms.ToolStripMenuItem drawPointToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem drawLineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem queryBoxToolStripMenuItem;
+        private System.Windows.Forms.Button btnRouting;
     }
 }
 

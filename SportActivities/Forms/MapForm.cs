@@ -294,5 +294,11 @@ namespace SportActivities
             LayerSettings layerSettingsForm = new LayerSettings(ref mapBox, ref layerModel);
             layerSettingsForm.ShowDialog();
         }
+
+        private void btnRouting_Click(object sender, EventArgs e)
+        {
+            mapBox.Map.Layers.Add(dataManagement.createRoutingLayer(new Point(-2236233, 595509391), new Point(210713, 595528618)));
+            mapBox.Refresh();
+        }
     }
 }
