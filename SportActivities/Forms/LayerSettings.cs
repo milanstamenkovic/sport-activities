@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using SportActivities.DataModels;
 using System.Drawing;
 using SharpMap.Forms;
+using System.Collections.Generic;
 
 namespace SportActivities
 {
@@ -13,7 +14,6 @@ namespace SportActivities
     {
         private MapBox mapBox;
         private LayerModel layer;
-        private FeatureDataSet featureData;
         private DataManagement dataManagement;
         private string geometryType;
 
@@ -24,7 +24,7 @@ namespace SportActivities
             dataManagement = new DataManagement();
             this.mapBox = mapBox;
             this.layer = layer;
-            getFeatureData();
+
             initLayerLabelComboBox();
 
             lbLayerName.Text = layer.vectorLayer.LayerName;
@@ -52,13 +52,13 @@ namespace SportActivities
 
         private void initLayerLabelComboBox()
         {
-            DataColumnCollection columns = featureData.Tables[0].Columns;
+            List<string> attributes = dataManagement.getAllLayerAttributes(layer.vectorLayer.LayerName);
 
-            for (int i = 0; i < columns.Count; ++i)
+            foreach(string attr in attributes)
             {
                 ComboboxItem item = ComboboxItem.getInstance();
-                item.Value = columns[i].ColumnName;
-                item.Text = beautify((string)item.Value);
+                item.Value = attr;
+                item.Text = beautify(attr);
                 comboboxLabel.Items.Add(item);
             }
             
@@ -71,19 +71,6 @@ namespace SportActivities
 
             result = result.Replace("_", " ");
             return result;
-        }
-
-        private void getFeatureData()
-        {
-            featureData = new FeatureDataSet();
-            if (layer.vectorLayer.IsQueryEnabled)
-            {
-                layer.vectorLayer.ExecuteIntersectionQuery(layer.vectorLayer.DataSource.GetExtents(), featureData);
-            }
-            else
-            {
-                Console.WriteLine("Layer hasn't query enabled!");
-            }
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
