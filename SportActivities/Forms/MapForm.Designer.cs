@@ -49,7 +49,14 @@
             this.queryBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label2 = new System.Windows.Forms.Label();
             this.activeToolLabel = new System.Windows.Forms.Label();
+            this.btnFeatureInfo = new System.Windows.Forms.Button();
+            this.featureInfoPanel = new System.Windows.Forms.Panel();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.latStatusBar = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lngStatusBar = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // mapBox
@@ -59,7 +66,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.mapBox.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.mapBox.Cursor = System.Windows.Forms.Cursors.Default;
+            this.mapBox.Cursor = System.Windows.Forms.Cursors.SizeAll;
             this.mapBox.FineZoomFactor = 10D;
             this.mapBox.Location = new System.Drawing.Point(266, 50);
             this.mapBox.MapQueryMode = SharpMap.Forms.MapBox.MapQueryType.LayerByIndex;
@@ -75,6 +82,7 @@
             this.mapBox.WheelZoomMagnitude = -2D;
             this.mapBox.MouseMove += new SharpMap.Forms.MapBox.MouseEventHandler(this.mapBox_MouseMove);
             this.mapBox.GeometryDefined += new SharpMap.Forms.MapBox.GeometryDefinedHandler(this.mapBox_GeometryDefined);
+            this.mapBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mapBox_MouseClick);
             // 
             // layersTreeView
             // 
@@ -265,11 +273,61 @@
             this.activeToolLabel.TabIndex = 11;
             this.activeToolLabel.Text = "None";
             // 
+            // btnFeatureInfo
+            // 
+            this.btnFeatureInfo.Location = new System.Drawing.Point(16, 487);
+            this.btnFeatureInfo.Name = "btnFeatureInfo";
+            this.btnFeatureInfo.Size = new System.Drawing.Size(99, 23);
+            this.btnFeatureInfo.TabIndex = 12;
+            this.btnFeatureInfo.Text = "Feature Info";
+            this.btnFeatureInfo.UseVisualStyleBackColor = true;
+            this.btnFeatureInfo.Click += new System.EventHandler(this.btnFeatureInfo_Click);
+            // 
+            // featureInfoPanel
+            // 
+            this.featureInfoPanel.Location = new System.Drawing.Point(13, 527);
+            this.featureInfoPanel.Name = "featureInfoPanel";
+            this.featureInfoPanel.Size = new System.Drawing.Size(247, 203);
+            this.featureInfoPanel.TabIndex = 13;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.latStatusBar,
+            this.lngStatusBar});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 720);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1096, 22);
+            this.statusStrip1.TabIndex = 14;
+            this.statusStrip1.Text = "Coordinates:";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(71, 17);
+            this.toolStripStatusLabel1.Text = "Coordinates";
+            // 
+            // latStatusBar
+            // 
+            this.latStatusBar.Name = "latStatusBar";
+            this.latStatusBar.Size = new System.Drawing.Size(13, 17);
+            this.latStatusBar.Text = "0";
+            // 
+            // lngStatusBar
+            // 
+            this.lngStatusBar.Name = "lngStatusBar";
+            this.lngStatusBar.Size = new System.Drawing.Size(13, 17);
+            this.lngStatusBar.Text = "0";
+            // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1096, 742);
+            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.featureInfoPanel);
+            this.Controls.Add(this.btnFeatureInfo);
             this.Controls.Add(this.activeToolLabel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnShowLabels);
@@ -286,6 +344,8 @@
             this.Text = "Sport activities";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -314,6 +374,12 @@
         private System.Windows.Forms.ToolStripMenuItem drawPointToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem drawLineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem queryBoxToolStripMenuItem;
+        private System.Windows.Forms.Button btnFeatureInfo;
+        private System.Windows.Forms.Panel featureInfoPanel;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel latStatusBar;
+        private System.Windows.Forms.ToolStripStatusLabel lngStatusBar;
     }
 }
 

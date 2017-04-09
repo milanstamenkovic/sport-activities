@@ -3,12 +3,14 @@ using Npgsql;
 using SharpMap.Layers;
 using SharpMap.Forms;
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms; 
+using System.Windows.Forms;
 using GeoAPI.CoordinateSystems;
 using ProjNet.CoordinateSystems;
 using SportActivities.DataModels;
+using SharpMap.Data;
+using GeoAPI.Geometries;
 
 namespace SportActivities
 {
@@ -19,6 +21,7 @@ namespace SportActivities
         private List<LayerRecord> layerRecords;
         private DataManagement dataManagement;
         private bool showLabels;
+        private bool showFeatureInfo;
 
         public MapForm()
         {
@@ -78,20 +81,22 @@ namespace SportActivities
             return new TileLayer(new BruTile.Web.OsmTileSource(), "OSM");
         }
 
-        private void mapBox_MouseMove(GeoAPI.Geometries.Coordinate worldPos, MouseEventArgs imagePos)
+        private void mapBox_MouseMove(Coordinate worldPos, MouseEventArgs imagePos)
         {
-            IProjectedCoordinateSystem utmProj = createUtmProjection(34);
-            IGeographicCoordinateSystem geoCs = utmProj.GeographicCoordinateSystem;
-            ICoordinateTransformation transform = dataManagement.ctFact.CreateFromCoordinateSystems(geoCs, utmProj);
-            double[] coordsGeo = new double[2];
-            double[] coordsUtm;
-            coordsGeo[0] = worldPos.X;
-            coordsGeo[1] = worldPos.Y;
-            coordsUtm = transform.MathTransform.Transform(coordsGeo);
-            worldPos.X = coordsUtm[0];
-            worldPos.Y = coordsUtm[1];
+            //IProjectedCoordinateSystem utmProj = createUtmProjection(34);
+            //IGeographicCoordinateSystem geoCs = utmProj.GeographicCoordinateSystem;
+            //ICoordinateTransformation transform = dataManagement.ctFact.CreateFromCoordinateSystems(geoCs, utmProj);
+            //double[] coordsGeo = new double[2];
+            //double[] coordsUtm;
+            //coordsGeo[0] = worldPos.X;
+            //coordsGeo[1] = worldPos.Y;
+            //coordsUtm = transform.MathTransform.Transform(coordsGeo);
+            //worldPos.X = coordsUtm[0];
+            //worldPos.Y = coordsUtm[1];
 
-            labelMouseCoords.Text = worldPos.X + ", " + worldPos.Y;
+            Coordinate coord = dataManagement.reverseTransfCoord.MathTransform.Transform(worldPos);
+            latStatusBar.Text = Convert.ToString(Math.Round(coord.X, 3));
+            lngStatusBar.Text = Convert.ToString(Math.Round(coord.Y, 3));
         } 
 
         private IProjectedCoordinateSystem createUtmProjection(int utmZone)
@@ -270,6 +275,39 @@ namespace SportActivities
             LayerModel layerModel = layers[e.Node.Text];
             LayerSettings layerSettingsForm = new LayerSettings(ref mapBox, ref layerModel);
             layerSettingsForm.ShowDialog();
+        }
+
+        private void mapBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            if(showFeatureInfo)
+            {
+                FeatureDataSet fds = dataManagement.getFeatureDataSet(mapBox.Map.Layers, mapBox.Map.ImageToWorld(e.Location));
+
+                foreach(FeatureDataTable table in fds.Tables)
+                    if (table.Rows.Count > 0)
+                        renderFeatureInfoTable(table);
+            }
+        }
+
+        private void btnFeatureInfo_Click(object sender, EventArgs e)
+        {
+            showFeatureInfo = !showFeatureInfo;
+
+            if(showFeatureInfo)
+            {
+                btnFeatureInfo.BackColor = SystemColors.ActiveCaption;
+            }
+            else
+            {
+                btnFeatureInfo.BackColor = SystemColors.Control;
+            }
+        }
+
+        private void renderFeatureInfoTable(FeatureDataTable table)
+        {
+            DataGridView gridView = new DataGridView();
+            gridView.DataSource = table;
+            featureInfoPanel.Controls.Add(gridView);
         }
     }
 }

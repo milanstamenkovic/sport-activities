@@ -1,11 +1,16 @@
 ﻿using GeoAPI.CoordinateSystems.Transformations;
+using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Utilities;
 using Npgsql;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using SharpMap.Data;
 using SharpMap.Layers;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing;
+using System.Linq;
 
 namespace SportActivities
 {
@@ -86,5 +91,53 @@ namespace SportActivities
 
             return layers;
         }
+
+
+
+        public FeatureDataSet getFeatureDataSet(LayerCollection layers, Coordinate coords)
+        {
+            IGeometry geometry = CreateGeometry(coords);
+            FeatureDataSet fds = new FeatureDataSet();
+            
+            foreach(VectorLayer layer in layers)
+                if (layer.IsQueryEnabled)
+                    layer.ExecuteIntersectionQuery(geometry.EnvelopeInternal, fds);
+
+            return fds;
+        }
+
+        private IGeometry getGeometry(Coordinate[] coordinates)
+        {
+            Coordinate[] transformedCoordinates = new Coordinate[coordinates.Length];
+
+            for (int i = 0; i < coordinates.Length - 1; i++)
+            {
+                Coordinate transformed = reverseTransfCoord.MathTransform.Transform(coordinates[i]);
+                transformedCoordinates[i] = transformed;
+            }
+            transformedCoordinates[coordinates.Length - 1] = transformedCoordinates.First();
+
+            LinearRing lr = new LinearRing(transformedCoordinates);
+            return new Polygon(lr); ;
+        }
+
+        private IGeometry CreateGeometry(Coordinate coords)
+        {
+            double circleSize = 500;
+            coords.X -= circleSize / 2;
+            coords.Y -= circleSize / 2;
+
+            GeometricShapeFactory gf = new GeometricShapeFactory();
+            gf.Base = coords;
+            gf.Centre = coords;
+            gf.Size = circleSize;
+            gf.Width = circleSize;
+            gf.Height = circleSize;
+
+            IPolygon circle = gf.CreateCircle();
+
+            return getGeometry(circle.Coordinates);
+        }
+
     }
 }
