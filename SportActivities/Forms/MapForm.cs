@@ -27,7 +27,7 @@ namespace SportActivities
             dataManagement = new DataManagement();
 
             layers = new Dictionary<string, LayerModel>();
-            layerRecords = GetAllLayers();
+            layerRecords = dataManagement.GetAllLayers();
 
             createVectorAndLabelInitialLayers();
 
@@ -76,29 +76,6 @@ namespace SportActivities
         public ILayer CreateBackgroundLayer()
         {
             return new TileLayer(new BruTile.Web.OsmTileSource(), "OSM");
-        }
-
-        public List<LayerRecord> GetAllLayers()
-        {
-            List<LayerRecord> layers;
-            using (NpgsqlConnection conn = new NpgsqlConnection(dataManagement.connectionParams))
-            {
-                conn.Open();
-
-                using (NpgsqlCommand command = new NpgsqlCommand("select * from geometry_columns where f_table_schema = 'public';", conn))
-                {
-
-                    NpgsqlDataReader reader = command.ExecuteReader();
-                    layers = new List<LayerRecord>();
-                    while (reader.Read())
-                    {
-                        layers.Add(new LayerRecord(reader[1].ToString(), reader[2].ToString(),
-                            reader[3].ToString(), (int)reader[4], (int)reader[5], reader[6].ToString()));
-                    }
-                }
-            }
-
-            return layers;
         }
 
         private void mapBox_MouseMove(GeoAPI.Geometries.Coordinate worldPos, MouseEventArgs imagePos)

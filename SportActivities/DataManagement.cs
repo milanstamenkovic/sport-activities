@@ -42,7 +42,7 @@ namespace SportActivities
             return labelLayer;
         }
 
-        public List<string> getAllLayerlAttributes(string layer)
+        public List<string> getAllLayerAttributes(string layer)
         {
             List<string> attributes;
 
@@ -62,6 +62,29 @@ namespace SportActivities
             }
 
             return attributes;
+        }
+
+        public List<LayerRecord> GetAllLayers()
+        {
+            List<LayerRecord> layers;
+            using (NpgsqlConnection conn = new NpgsqlConnection(connectionParams))
+            {
+                conn.Open();
+
+                using (NpgsqlCommand command = new NpgsqlCommand("select * from geometry_columns where f_table_schema = 'public';", conn))
+                {
+
+                    NpgsqlDataReader reader = command.ExecuteReader();
+                    layers = new List<LayerRecord>();
+                    while (reader.Read())
+                    {
+                        layers.Add(new LayerRecord(reader[1].ToString(), reader[2].ToString(),
+                            reader[3].ToString(), (int)reader[4], (int)reader[5], reader[6].ToString()));
+                    }
+                }
+            }
+
+            return layers;
         }
     }
 }
