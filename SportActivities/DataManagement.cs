@@ -183,6 +183,16 @@ namespace SportActivities
             resultLayer.DataSource = provider;
             return resultLayer;
         }
+
+        public FeatureDataSet getFeatureDataSetForLayer(VectorLayer layer)
+        {
+            FeatureDataSet fds = new FeatureDataSet();
+
+            if (layer.IsQueryEnabled)
+                layer.ExecuteIntersectionQuery(layer.Envelope, fds);
+
+            return fds;
+        }
         
         public VectorLayer createRoutingLayer(Coordinate start, Coordinate end)
         {

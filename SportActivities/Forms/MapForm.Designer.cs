@@ -250,9 +250,9 @@
             this.activeToolLabel.Location = new System.Drawing.Point(83, 21);
             this.activeToolLabel.Name = "activeToolLabel";
             this.activeToolLabel.Padding = new System.Windows.Forms.Padding(5);
-            this.activeToolLabel.Size = new System.Drawing.Size(45, 25);
+            this.activeToolLabel.Size = new System.Drawing.Size(38, 25);
             this.activeToolLabel.TabIndex = 11;
-            this.activeToolLabel.Text = "None";
+            this.activeToolLabel.Text = "Pan";
             // 
             // btnFeatureInfo
             // 

@@ -85,8 +85,8 @@ namespace SportActivities
         private void mapBox_MouseMove(Coordinate worldPos, MouseEventArgs imagePos)
         {
             Coordinate coord = dataManagement.reverseTransfCoord.MathTransform.Transform(worldPos);
-            latStatusBar.Text = Convert.ToString(Math.Round(coord.X, 3));
-            lngStatusBar.Text = Convert.ToString(Math.Round(coord.Y, 3));
+            latStatusBar.Text = Convert.ToString(Math.Round(coord.X, 5));
+            lngStatusBar.Text = Convert.ToString(Math.Round(coord.Y, 5));
         } 
 
         private void layersTreeView_AfterSelect(object sender, TreeViewEventArgs e)
@@ -296,11 +296,19 @@ namespace SportActivities
 
                     VectorLayer queryLayer = dataManagement.DefinitionQueryFilter(query);
                     mapBox.Map.Layers.Clear();
+                    mapBox.Map.BackgroundLayer.Clear();
 
                     mapBox.Map.Layers.Add(queryLayer);
+                    mapBox.Map.ZoomToExtents();
+
+                    if (mapCheckBox.Checked)
+                        mapBox.Map.BackgroundLayer.Add(CreateBackgroundLayer());
 
                     mapBox.Refresh();
                     mapBox.Invalidate();
+
+                    FeatureInfoForm fdsForm = new FeatureInfoForm(dataManagement.getFeatureDataSetForLayer(queryLayer));
+                    fdsForm.Show();
                 }
             };
         }
