@@ -31,66 +31,80 @@
             this.comboBoxAttributes = new System.Windows.Forms.ComboBox();
             this.comboBoxQuery = new System.Windows.Forms.ComboBox();
             this.textBoxValue = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.comboBoxLayer = new System.Windows.Forms.ComboBox();
+            this.btnFilter = new System.Windows.Forms.Button();
+            this.panelQuery = new System.Windows.Forms.Panel();
+            this.panelQuery.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxAttributes
             // 
             this.comboBoxAttributes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxAttributes.FormattingEnabled = true;
-            this.comboBoxAttributes.Location = new System.Drawing.Point(144, 12);
+            this.comboBoxAttributes.Location = new System.Drawing.Point(134, 16);
             this.comboBoxAttributes.Name = "comboBoxAttributes";
             this.comboBoxAttributes.Size = new System.Drawing.Size(121, 21);
             this.comboBoxAttributes.TabIndex = 0;
             // 
             // comboBoxQuery
             // 
+            this.comboBoxQuery.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxQuery.FormattingEnabled = true;
-            this.comboBoxQuery.Location = new System.Drawing.Point(283, 12);
+            this.comboBoxQuery.Location = new System.Drawing.Point(273, 16);
             this.comboBoxQuery.Name = "comboBoxQuery";
             this.comboBoxQuery.Size = new System.Drawing.Size(81, 21);
             this.comboBoxQuery.TabIndex = 1;
             // 
             // textBoxValue
             // 
-            this.textBoxValue.Location = new System.Drawing.Point(382, 12);
+            this.textBoxValue.Location = new System.Drawing.Point(372, 16);
             this.textBoxValue.Name = "textBoxValue";
             this.textBoxValue.Size = new System.Drawing.Size(155, 20);
             this.textBoxValue.TabIndex = 2;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(552, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
             // 
             // comboBoxLayer
             // 
             this.comboBoxLayer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxLayer.FormattingEnabled = true;
-            this.comboBoxLayer.Location = new System.Drawing.Point(13, 12);
+            this.comboBoxLayer.Location = new System.Drawing.Point(3, 16);
             this.comboBoxLayer.Name = "comboBoxLayer";
             this.comboBoxLayer.Size = new System.Drawing.Size(111, 21);
             this.comboBoxLayer.TabIndex = 4;
+            this.comboBoxLayer.SelectedIndexChanged += new System.EventHandler(this.comboBoxLayer_SelectedIndexChanged);
+            // 
+            // btnFilter
+            // 
+            this.btnFilter.Location = new System.Drawing.Point(464, 71);
+            this.btnFilter.Name = "btnFilter";
+            this.btnFilter.Size = new System.Drawing.Size(75, 23);
+            this.btnFilter.TabIndex = 5;
+            this.btnFilter.Text = "Filter";
+            this.btnFilter.UseVisualStyleBackColor = true;
+            this.btnFilter.Click += new System.EventHandler(this.btnFilter_Click);
+            // 
+            // panelQuery
+            // 
+            this.panelQuery.Controls.Add(this.comboBoxLayer);
+            this.panelQuery.Controls.Add(this.comboBoxAttributes);
+            this.panelQuery.Controls.Add(this.comboBoxQuery);
+            this.panelQuery.Controls.Add(this.textBoxValue);
+            this.panelQuery.Location = new System.Drawing.Point(12, 12);
+            this.panelQuery.Name = "panelQuery";
+            this.panelQuery.Size = new System.Drawing.Size(536, 53);
+            this.panelQuery.TabIndex = 6;
             // 
             // DefinitonQueryForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(639, 47);
-            this.Controls.Add(this.comboBoxLayer);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBoxValue);
-            this.Controls.Add(this.comboBoxQuery);
-            this.Controls.Add(this.comboBoxAttributes);
+            this.ClientSize = new System.Drawing.Size(560, 113);
+            this.Controls.Add(this.panelQuery);
+            this.Controls.Add(this.btnFilter);
             this.Name = "DefinitonQueryForm";
             this.Text = "DefinitonQueryForm";
+            this.panelQuery.ResumeLayout(false);
+            this.panelQuery.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -99,7 +113,8 @@
         private System.Windows.Forms.ComboBox comboBoxAttributes;
         private System.Windows.Forms.ComboBox comboBoxQuery;
         private System.Windows.Forms.TextBox textBoxValue;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ComboBox comboBoxLayer;
+        private System.Windows.Forms.Button btnFilter;
+        private System.Windows.Forms.Panel panelQuery;
     }
 }

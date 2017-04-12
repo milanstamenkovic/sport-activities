@@ -168,8 +168,6 @@
             // 
             // noneToolStripMenuItem
             // 
-            this.noneToolStripMenuItem.Checked = true;
-            this.noneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.noneToolStripMenuItem.Name = "noneToolStripMenuItem";
             this.noneToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.noneToolStripMenuItem.Tag = "9";
@@ -177,6 +175,8 @@
             // 
             // panToolStripMenuItem
             // 
+            this.panToolStripMenuItem.Checked = true;
+            this.panToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.panToolStripMenuItem.Name = "panToolStripMenuItem";
             this.panToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.panToolStripMenuItem.Tag = "0";

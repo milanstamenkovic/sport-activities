@@ -151,6 +151,7 @@
     <Compile Include="DataModels\ComboboxItem.cs" />
     <Compile Include="DataModels\EnumUtil.cs" />
     <Compile Include="DataModels\LayerModel.cs" />
+    <Compile Include="DataModels\Query.cs" />
     <Compile Include="Forms\DefinitonQueryForm.cs">
       <SubType>Form</SubType>
     </Compile>

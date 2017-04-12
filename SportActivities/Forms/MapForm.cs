@@ -28,7 +28,7 @@ namespace SportActivities
         {
             InitializeComponent();
 
-            dataManagement = new DataManagement();
+            dataManagement = DataManagement.Instance;
 
             layers = new Dictionary<string, LayerModel>();
             layerRecords = dataManagement.GetAllLayers();
@@ -42,6 +42,7 @@ namespace SportActivities
             mapBox.Map.ZoomToExtents();
             mapBox.EnableShiftButtonDragRectangleZoom = true;
 
+            mapBox.ActiveTool = MapBox.Tools.Pan;
             mapBox.Refresh();
         }
 
@@ -285,8 +286,23 @@ namespace SportActivities
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            DefinitonQueryForm form = new DefinitonQueryForm();
-            form.ShowDialog();
+            using (DefinitonQueryForm form = new DefinitonQueryForm())
+            {
+                form.ShowDialog();
+
+                if(form.IsQueryDefined())
+                {
+                    Query query = form.getQuery();
+
+                    VectorLayer queryLayer = dataManagement.DefinitionQueryFilter(query);
+                    mapBox.Map.Layers.Clear();
+
+                    mapBox.Map.Layers.Add(queryLayer);
+
+                    mapBox.Refresh();
+                    mapBox.Invalidate();
+                }
+            };
         }
     }
 }
