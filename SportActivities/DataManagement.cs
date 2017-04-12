@@ -6,8 +6,10 @@ using Npgsql;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using SharpMap.Data;
+using SharpMap.Data.Providers;
 using SharpMap.Layers;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Drawing;
 using System.Linq;
@@ -92,52 +94,112 @@ namespace SportActivities
             return layers;
         }
 
-
-
-        public FeatureDataSet getFeatureDataSet(LayerCollection layers, Coordinate coords)
+        public FeatureDataSet GetFeatureDataSet(LayerCollection layers, Coordinate coord, double areaSize)
         {
-            IGeometry geometry = CreateGeometry(coords);
+            IGeometry geometry = getGeometryFromPoint(coord, areaSize);
             FeatureDataSet fds = new FeatureDataSet();
-            
-            foreach(VectorLayer layer in layers)
+
+            foreach (VectorLayer layer in layers)
+            {
                 if (layer.IsQueryEnabled)
                     layer.ExecuteIntersectionQuery(geometry.EnvelopeInternal, fds);
-
+            }
             return fds;
         }
 
-        private IGeometry getGeometry(Coordinate[] coordinates)
+        private IGeometry getGeometryFromPoint(Coordinate coord, double size)
         {
-            Coordinate[] transformedCoordinates = new Coordinate[coordinates.Length];
-
-            for (int i = 0; i < coordinates.Length - 1; i++)
-            {
-                Coordinate transformed = reverseTransfCoord.MathTransform.Transform(coordinates[i]);
-                transformedCoordinates[i] = transformed;
-            }
-            transformedCoordinates[coordinates.Length - 1] = transformedCoordinates.First();
-
-            LinearRing lr = new LinearRing(transformedCoordinates);
-            return new Polygon(lr); ;
-        }
-
-        private IGeometry CreateGeometry(Coordinate coords)
-        {
-            double circleSize = 500;
-            coords.X -= circleSize / 2;
-            coords.Y -= circleSize / 2;
+            coord.X -= size / 2;
+            coord.Y -= size / 2;
 
             GeometricShapeFactory gf = new GeometricShapeFactory();
-            gf.Base = coords;
-            gf.Centre = coords;
-            gf.Size = circleSize;
-            gf.Width = circleSize;
-            gf.Height = circleSize;
+            gf.Base = coord;
+            gf.Centre = coord;
+            gf.Size = size;
+            gf.Width = size;
+            gf.Height = size;
 
             IPolygon circle = gf.CreateCircle();
 
-            return getGeometry(circle.Coordinates);
+            circle.Coordinates[circle.Coordinates.Length - 1] = circle.Coordinates.First();
+
+            LinearRing lr = new LinearRing(circle.Coordinates);
+            return new Polygon(lr);
         }
+
+        public VectorLayer GeometryFilter(LayerCollection layers, IGeometry geometry)
+        {
+            FeatureDataSet fds = new FeatureDataSet();
+            VectorLayer resultLayer = new VectorLayer("Geometry Layer");
+            resultLayer.CoordinateTransformation = transfCoord;
+            resultLayer.ReverseCoordinateTransformation = reverseTransfCoord;
+            Collection<IGeometry> geomColl = new Collection<IGeometry>();
+
+            for(int i = 0; i < layers.Count; ++i)
+            {
+                VectorLayer layer = (VectorLayer)layers[i];
+                if (layer.IsQueryEnabled)
+                {
+                    layer.ExecuteIntersectionQuery(geometry.EnvelopeInternal, fds);
+
+                    foreach (FeatureDataRow fdr in fds.Tables[i].Rows)
+                        geomColl.Add(fdr.Geometry);
+                }
+                
+            }
+
+            resultLayer.DataSource = new GeometryProvider(geomColl);
+            return resultLayer;
+
+        }
+
+        public VectorLayer DefinitionQueryFilter(string query, string tablename)
+        {
+            VectorLayer resultLayer = new VectorLayer("Geometry Layer");
+            resultLayer.CoordinateTransformation = transfCoord;
+            resultLayer.ReverseCoordinateTransformation = reverseTransfCoord;
+
+            PostGIS provider = new PostGIS(connectionParams, tablename, "gid");
+
+            provider.DefinitionQuery = query;
+
+            return resultLayer;
+        }
+        
+        public VectorLayer createRoutingLayer(Coordinate start, Coordinate end)
+        {
+            //prepare temp table
+            using (NpgsqlConnection conn = new NpgsqlConnection(connectionParams))
+            {
+                conn.Open();
+
+                using (NpgsqlCommand command = new NpgsqlCommand("drop table if exists temp_route;", conn))
+                {
+                    command.ExecuteNonQuery();
+                }
+
+                using (NpgsqlCommand command = new NpgsqlCommand("CREATE TABLE temp_route" +
+                    " AS select * from pgr_fromAtoB('relations_ways'," + start.X + "," + start.Y + "," + end.X + "," + end.Y + ");", conn))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            //create layer
+            VectorLayer layer = new VectorLayer("RouteAtoB");
+            var postGisProvider = new PostGIS(connectionParams, "temp_route", "geom", "seq");
+
+            postGisProvider.SRID = 4326;
+            layer.DataSource = postGisProvider;
+
+            layer.CoordinateTransformation = transfCoord;
+            layer.ReverseCoordinateTransformation = reverseTransfCoord;
+
+            layer.Style.Line = new Pen(Color.IndianRed, 5);
+
+            return layer;
+        }
+
 
     }
 }

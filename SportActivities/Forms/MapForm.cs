@@ -11,6 +11,7 @@ using ProjNet.CoordinateSystems;
 using SportActivities.DataModels;
 using SharpMap.Data;
 using GeoAPI.Geometries;
+using SportActivities.Forms;
 
 namespace SportActivities
 {
@@ -39,10 +40,9 @@ namespace SportActivities
             mapBox.Map.BackgroundLayer.Add(CreateBackgroundLayer());
 
             mapBox.Map.ZoomToExtents();
+            mapBox.EnableShiftButtonDragRectangleZoom = true;
 
             mapBox.Refresh();
-            mapBox.EnableShiftButtonDragRectangleZoom = true;
-            mapBox.ActiveTool = MapBox.Tools.Pan;
         }
 
         private void createVectorAndLabelInitialLayers()
@@ -83,43 +83,10 @@ namespace SportActivities
 
         private void mapBox_MouseMove(Coordinate worldPos, MouseEventArgs imagePos)
         {
-            //IProjectedCoordinateSystem utmProj = createUtmProjection(34);
-            //IGeographicCoordinateSystem geoCs = utmProj.GeographicCoordinateSystem;
-            //ICoordinateTransformation transform = dataManagement.ctFact.CreateFromCoordinateSystems(geoCs, utmProj);
-            //double[] coordsGeo = new double[2];
-            //double[] coordsUtm;
-            //coordsGeo[0] = worldPos.X;
-            //coordsGeo[1] = worldPos.Y;
-            //coordsUtm = transform.MathTransform.Transform(coordsGeo);
-            //worldPos.X = coordsUtm[0];
-            //worldPos.Y = coordsUtm[1];
-
             Coordinate coord = dataManagement.reverseTransfCoord.MathTransform.Transform(worldPos);
             latStatusBar.Text = Convert.ToString(Math.Round(coord.X, 3));
             lngStatusBar.Text = Convert.ToString(Math.Round(coord.Y, 3));
         } 
-
-        private IProjectedCoordinateSystem createUtmProjection(int utmZone)
-        {
-            CoordinateSystemFactory cFac = new CoordinateSystemFactory();
-            IEllipsoid elipsoid = cFac.CreateFlattenedSphere("WGS 84", 6378137, 298.257, LinearUnit.Metre);
-            IHorizontalDatum datum = cFac.CreateHorizontalDatum("WGS_1984", DatumType.HD_Geocentric, elipsoid, null);
-            IGeographicCoordinateSystem gcs = cFac.CreateGeographicCoordinateSystem("WGS 84", AngularUnit.Degrees, datum,
-                PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East), new AxisInfo("Lat", AxisOrientationEnum.North));
-
-            List<ProjectionParameter> parameters = new List<ProjectionParameter>();
-
-            parameters.Add(new ProjectionParameter("latitude_of_origin", 0.0));
-            parameters.Add(new ProjectionParameter("central_meridian", -183 + 6 * utmZone));
-            parameters.Add(new ProjectionParameter("scale_factor", 0.9996));
-            parameters.Add(new ProjectionParameter("false_easting", 500000));
-            parameters.Add(new ProjectionParameter("false_northing", 0.0));
-            IProjection projection = cFac.CreateProjection("Transverse Mercator", "Transverse Mercator", parameters);
-
-
-            return cFac.CreateProjectedCoordinateSystem("WGS 84 / UTM zone " + utmZone + "N", gcs, projection, LinearUnit.Metre,
-                new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
-        }
 
         private void layersTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -179,6 +146,7 @@ namespace SportActivities
         private void renderActiveLayers()
         {
             mapBox.Map.Layers.Clear();
+            mapBox.Map.BackgroundLayer.Clear();
 
             foreach(TreeNode layerNode in layersTreeView.Nodes)
                 if (layerNode.Checked)
@@ -188,6 +156,12 @@ namespace SportActivities
                 foreach (TreeNode layerNode in layersTreeView.Nodes)
                     if (layerNode.Checked)
                         mapBox.Map.Layers.Add(layers[layerNode.Text].labelLayer);
+
+            if (mapBox.Map.Layers.Count > 0)
+                mapBox.Map.ZoomToExtents();
+
+            if (mapCheckBox.Checked)
+                mapBox.Map.BackgroundLayer.Add(CreateBackgroundLayer());
 
             mapBox.Refresh();
         }
@@ -217,13 +191,16 @@ namespace SportActivities
             renderActiveLayers();
         }
 
-        private void mapBox_GeometryDefined(GeoAPI.Geometries.IGeometry geometry)
+        private void mapBox_GeometryDefined(IGeometry geometry)
         {
-            //foreach (VectorLayer layer in layers.Values)
-            //{
-            //    if(layer.IsQueryEnabled)
-            //        layer.
-            //}
+
+            VectorLayer geometryLayer = dataManagement.GeometryFilter(mapBox.Map.Layers, geometry);
+            mapBox.Map.Layers.Clear();
+
+            mapBox.Map.Layers.Add(geometryLayer);
+
+            mapBox.Refresh();
+            mapBox.Invalidate();
         }
 
         private void toolsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -281,11 +258,8 @@ namespace SportActivities
         {
             if(showFeatureInfo)
             {
-                FeatureDataSet fds = dataManagement.getFeatureDataSet(mapBox.Map.Layers, mapBox.Map.ImageToWorld(e.Location));
-
-                foreach(FeatureDataTable table in fds.Tables)
-                    if (table.Rows.Count > 0)
-                        renderFeatureInfoTable(table);
+                FeatureDataSet fds = dataManagement.GetFeatureDataSet(mapBox.Map.Layers, mapBox.Map.ImageToWorld(e.Location), mapBox.Map.Zoom / 100.0);
+                FeatureInfoForm form = new FeatureInfoForm(fds);
             }
         }
 
@@ -303,11 +277,16 @@ namespace SportActivities
             }
         }
 
-        private void renderFeatureInfoTable(FeatureDataTable table)
+        private void btnRouting_Click(object sender, EventArgs e)
         {
-            DataGridView gridView = new DataGridView();
-            gridView.DataSource = table;
-            featureInfoPanel.Controls.Add(gridView);
+            mapBox.Map.Layers.Add(dataManagement.createRoutingLayer(new Coordinate(21.8660417174969, 43.3815275647817), new Coordinate(21.8890036212656, 43.3591535811185)));
+            mapBox.Refresh();
+        }
+
+        private void btnQuery_Click(object sender, EventArgs e)
+        {
+            DefinitonQueryForm form = new DefinitonQueryForm();
+            form.ShowDialog();
         }
     }
 }

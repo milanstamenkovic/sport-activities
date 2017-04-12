@@ -31,8 +31,6 @@
             this.mapBox = new SharpMap.Forms.MapBox();
             this.layersTreeView = new System.Windows.Forms.TreeView();
             this.mapCheckBox = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.labelMouseCoords = new System.Windows.Forms.Label();
             this.btnShowLabels = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,11 +48,12 @@
             this.label2 = new System.Windows.Forms.Label();
             this.activeToolLabel = new System.Windows.Forms.Label();
             this.btnFeatureInfo = new System.Windows.Forms.Button();
-            this.featureInfoPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.latStatusBar = new System.Windows.Forms.ToolStripStatusLabel();
             this.lngStatusBar = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnRouting = new System.Windows.Forms.Button();
+            this.btnQuery = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -112,27 +111,9 @@
             this.mapCheckBox.UseVisualStyleBackColor = true;
             this.mapCheckBox.CheckedChanged += new System.EventHandler(this.mapCheckBox_CheckedChanged);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 407);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(66, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Coordinates:";
-            // 
-            // labelMouseCoords
-            // 
-            this.labelMouseCoords.AutoSize = true;
-            this.labelMouseCoords.Location = new System.Drawing.Point(13, 429);
-            this.labelMouseCoords.Name = "labelMouseCoords";
-            this.labelMouseCoords.Size = new System.Drawing.Size(27, 13);
-            this.labelMouseCoords.TabIndex = 5;
-            this.labelMouseCoords.Text = "N/A";
-            // 
             // btnShowLabels
             // 
-            this.btnShowLabels.Location = new System.Drawing.Point(16, 457);
+            this.btnShowLabels.Location = new System.Drawing.Point(13, 406);
             this.btnShowLabels.Name = "btnShowLabels";
             this.btnShowLabels.Size = new System.Drawing.Size(99, 23);
             this.btnShowLabels.TabIndex = 6;
@@ -275,20 +256,13 @@
             // 
             // btnFeatureInfo
             // 
-            this.btnFeatureInfo.Location = new System.Drawing.Point(16, 487);
+            this.btnFeatureInfo.Location = new System.Drawing.Point(13, 435);
             this.btnFeatureInfo.Name = "btnFeatureInfo";
             this.btnFeatureInfo.Size = new System.Drawing.Size(99, 23);
             this.btnFeatureInfo.TabIndex = 12;
             this.btnFeatureInfo.Text = "Feature Info";
             this.btnFeatureInfo.UseVisualStyleBackColor = true;
             this.btnFeatureInfo.Click += new System.EventHandler(this.btnFeatureInfo_Click);
-            // 
-            // featureInfoPanel
-            // 
-            this.featureInfoPanel.Location = new System.Drawing.Point(13, 527);
-            this.featureInfoPanel.Name = "featureInfoPanel";
-            this.featureInfoPanel.Size = new System.Drawing.Size(247, 203);
-            this.featureInfoPanel.TabIndex = 13;
             // 
             // statusStrip1
             // 
@@ -320,20 +294,39 @@
             this.lngStatusBar.Size = new System.Drawing.Size(13, 17);
             this.lngStatusBar.Text = "0";
             // 
+            // btnRouting
+            // 
+            this.btnRouting.Location = new System.Drawing.Point(13, 464);
+            this.btnRouting.Name = "btnRouting";
+            this.btnRouting.Size = new System.Drawing.Size(99, 23);
+            this.btnRouting.TabIndex = 12;
+            this.btnRouting.Text = "Routing";
+            this.btnRouting.UseVisualStyleBackColor = true;
+            this.btnRouting.Click += new System.EventHandler(this.btnRouting_Click);
+            // 
+            // btnQuery
+            // 
+            this.btnQuery.Location = new System.Drawing.Point(13, 494);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(99, 23);
+            this.btnQuery.TabIndex = 15;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1096, 742);
+            this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.featureInfoPanel);
             this.Controls.Add(this.btnFeatureInfo);
+            this.Controls.Add(this.btnRouting);
             this.Controls.Add(this.activeToolLabel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnShowLabels);
             this.Controls.Add(this.mapCheckBox);
-            this.Controls.Add(this.labelMouseCoords);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.layersTreeView);
             this.Controls.Add(this.mapBox);
             this.Controls.Add(this.menuStrip1);
@@ -356,8 +349,6 @@
         private SharpMap.Forms.MapBox mapBox;
         private System.Windows.Forms.TreeView layersTreeView;
         private System.Windows.Forms.CheckBox mapCheckBox;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label labelMouseCoords;
         private System.Windows.Forms.Button btnShowLabels;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
@@ -375,11 +366,12 @@
         private System.Windows.Forms.ToolStripMenuItem drawLineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem queryBoxToolStripMenuItem;
         private System.Windows.Forms.Button btnFeatureInfo;
-        private System.Windows.Forms.Panel featureInfoPanel;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel latStatusBar;
         private System.Windows.Forms.ToolStripStatusLabel lngStatusBar;
+        private System.Windows.Forms.Button btnRouting;
+        private System.Windows.Forms.Button btnQuery;
     }
 }
 

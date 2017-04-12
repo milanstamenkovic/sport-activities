@@ -12,7 +12,6 @@ namespace SportActivities
 {
     public partial class LayerSettings : Form
     {
-        //private MapForm mapForm;
         private MapBox mapBox;
         private LayerModel layer;
         private DataManagement dataManagement;
@@ -59,20 +58,14 @@ namespace SportActivities
             {
                 ComboboxItem item = ComboboxItem.getInstance();
                 item.Value = attr;
-                item.Text = beautify(attr);
+                item.Text = Utils.beautify(attr);
                 comboboxLabel.Items.Add(item);
             }
             
             comboboxLabel.SelectedIndex = comboboxLabel.FindStringExact(layer.labelLayer.LabelColumn);
         }
 
-        private string beautify(string param)
-        {
-            string result = param.First().ToString().ToUpper() + param.Substring(1);
-
-            result = result.Replace("_", " ");
-            return result;
-        }
+       
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
