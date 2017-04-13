@@ -37,10 +37,10 @@
             this.btnAddCondition = new System.Windows.Forms.Button();
             this.panelQuery2 = new System.Windows.Forms.Panel();
             this.btnAddCondition2 = new System.Windows.Forms.Button();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.comboBoxLayer2 = new System.Windows.Forms.ComboBox();
+            this.comboBoxAttributes2 = new System.Windows.Forms.ComboBox();
+            this.comboBoxQuery2 = new System.Windows.Forms.ComboBox();
+            this.textBoxValue2 = new System.Windows.Forms.TextBox();
             this.relationComboBox = new System.Windows.Forms.ComboBox();
             this.spatialQueryCheckBox = new System.Windows.Forms.CheckBox();
             this.panelQuery.SuspendLayout();
@@ -49,6 +49,7 @@
             // 
             // comboBoxAttributes
             // 
+            this.comboBoxAttributes.AccessibleName = "attributesComboBox1";
             this.comboBoxAttributes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxAttributes.FormattingEnabled = true;
             this.comboBoxAttributes.Location = new System.Drawing.Point(130, 0);
@@ -121,10 +122,10 @@
             this.panelQuery2.AutoSize = true;
             this.panelQuery2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panelQuery2.Controls.Add(this.btnAddCondition2);
-            this.panelQuery2.Controls.Add(this.comboBox1);
-            this.panelQuery2.Controls.Add(this.comboBox2);
-            this.panelQuery2.Controls.Add(this.comboBox3);
-            this.panelQuery2.Controls.Add(this.textBox1);
+            this.panelQuery2.Controls.Add(this.comboBoxLayer2);
+            this.panelQuery2.Controls.Add(this.comboBoxAttributes2);
+            this.panelQuery2.Controls.Add(this.comboBoxQuery2);
+            this.panelQuery2.Controls.Add(this.textBoxValue2);
             this.panelQuery2.Enabled = false;
             this.panelQuery2.Location = new System.Drawing.Point(12, 103);
             this.panelQuery2.Name = "panelQuery2";
@@ -141,39 +142,41 @@
             this.btnAddCondition2.UseVisualStyleBackColor = true;
             this.btnAddCondition2.Click += new System.EventHandler(this.button1_Click);
             // 
-            // comboBox1
+            // comboBoxLayer2
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(0, 0);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(110, 21);
-            this.comboBox1.TabIndex = 4;
+            this.comboBoxLayer2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxLayer2.FormattingEnabled = true;
+            this.comboBoxLayer2.Location = new System.Drawing.Point(0, 0);
+            this.comboBoxLayer2.Name = "comboBoxLayer2";
+            this.comboBoxLayer2.Size = new System.Drawing.Size(110, 21);
+            this.comboBoxLayer2.TabIndex = 4;
+            this.comboBoxLayer2.SelectedIndexChanged += new System.EventHandler(this.comboBoxLayer2_SelectedIndexChanged);
             // 
-            // comboBox2
+            // comboBoxAttributes2
             // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(130, 0);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 21);
-            this.comboBox2.TabIndex = 0;
+            this.comboBoxAttributes2.AccessibleName = "attributesComboBox2";
+            this.comboBoxAttributes2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxAttributes2.FormattingEnabled = true;
+            this.comboBoxAttributes2.Location = new System.Drawing.Point(130, 0);
+            this.comboBoxAttributes2.Name = "comboBoxAttributes2";
+            this.comboBoxAttributes2.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxAttributes2.TabIndex = 0;
             // 
-            // comboBox3
+            // comboBoxQuery2
             // 
-            this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(270, 0);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(81, 21);
-            this.comboBox3.TabIndex = 1;
+            this.comboBoxQuery2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxQuery2.FormattingEnabled = true;
+            this.comboBoxQuery2.Location = new System.Drawing.Point(270, 0);
+            this.comboBoxQuery2.Name = "comboBoxQuery2";
+            this.comboBoxQuery2.Size = new System.Drawing.Size(81, 21);
+            this.comboBoxQuery2.TabIndex = 1;
             // 
-            // textBox1
+            // textBoxValue2
             // 
-            this.textBox1.Location = new System.Drawing.Point(370, 0);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(130, 20);
-            this.textBox1.TabIndex = 2;
+            this.textBoxValue2.Location = new System.Drawing.Point(370, 0);
+            this.textBoxValue2.Name = "textBoxValue2";
+            this.textBoxValue2.Size = new System.Drawing.Size(130, 20);
+            this.textBoxValue2.TabIndex = 2;
             // 
             // relationComboBox
             // 
@@ -236,10 +239,10 @@
         private System.Windows.Forms.Button btnAddCondition;
         private System.Windows.Forms.Panel panelQuery2;
         private System.Windows.Forms.Button btnAddCondition2;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.ComboBox comboBox3;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.ComboBox comboBoxLayer2;
+        private System.Windows.Forms.ComboBox comboBoxAttributes2;
+        private System.Windows.Forms.ComboBox comboBoxQuery2;
+        private System.Windows.Forms.TextBox textBoxValue2;
         private System.Windows.Forms.ComboBox relationComboBox;
         private System.Windows.Forms.CheckBox spatialQueryCheckBox;
     }

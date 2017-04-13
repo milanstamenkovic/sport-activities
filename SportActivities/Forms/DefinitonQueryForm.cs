@@ -34,14 +34,19 @@ namespace SportActivities.Forms
 
             extraConditions1 = extraConditions2 = 0;
 
-            populateLayersCombobox();
-            populateAttributesCombobox(((ComboboxItem)comboBoxLayer.SelectedItem).Value.ToString(), extraConditions1);
-            populateConditionsCombobox();
+            populateLayersCombobox(comboBoxLayer);
+            populateLayersCombobox(comboBoxLayer2);
+
+            populateAttributesCombobox(comboBoxAttributes, ((ComboboxItem)comboBoxLayer.SelectedItem).Value.ToString(), "1", extraConditions1);
+            populateAttributesCombobox(comboBoxAttributes2, ((ComboboxItem)comboBoxLayer2.SelectedItem).Value.ToString(), "2", extraConditions2);
+
+            comboBoxQuery.Items.AddRange(conditions);
+            comboBoxQuery2.Items.AddRange(conditions);
 
             isQueryDefined = false;
         }
 
-        private void populateLayersCombobox()
+        private void populateLayersCombobox(ComboBox combobox)
         {
             List<LayerRecord> records = DataManagement.Instance.GetAllLayers();
 
@@ -50,14 +55,14 @@ namespace SportActivities.Forms
                 ComboboxItem item = new ComboboxItem();
                 item.Text = Utils.beautify(record.TableName);
                 item.Value = record.TableName;
-                comboBoxLayer.Items.Add(item);
+                combobox.Items.Add(item);
             }
-            comboBoxLayer.SelectedItem = comboBoxLayer.Items[0];
+            combobox.SelectedItem = combobox.Items[0];
         }
 
-        private void populateAttributesCombobox(string layer, int extraConditions)
+        private void populateAttributesCombobox(ComboBox comboBoxAttrs, string layer, string sufix, int extraConditions)
         {
-            comboBoxAttributes.Items.Clear();
+            comboBoxAttrs.Items.Clear();
             
             List<object> attrs = DataManagement.Instance.getAllLayerAttributes(layer);
 
@@ -71,24 +76,26 @@ namespace SportActivities.Forms
                 items[i] = item;
             }
 
-            comboBoxAttributes.Items.AddRange(items);
+            comboBoxAttrs.Items.AddRange(items);
+            comboBoxAttrs.SelectedItem = comboBoxAttrs.Items[0];
 
-            for(int i = 0; i < extraConditions; ++i)
+            for (int i = 0; i < extraConditions; ++i)
             {
+                ComboBox extraConditionComboBox = (ComboBox)Controls.Find("attributesComboBox" + (i + 1).ToString() + "_" + sufix, true)[0];
 
+                if(extraConditionComboBox != null)
+                {
+                    extraConditionComboBox.Items.Clear();
+                    extraConditionComboBox.Items.AddRange(items);
+                    extraConditionComboBox.SelectedItem = extraConditionComboBox.Items[0];
+                }
             }
-            comboBoxAttributes.SelectedItem = comboBoxAttributes.Items[0];
         }
 
-        private void populateConditionsCombobox()
-        {
-            comboBoxQuery.Items.AddRange(conditions);
-        }
-
-        private void addCondition(Control parentPanel, int extraConditions)
+        private void addCondition(Control parentPanel, string sufix, int extraConditions)
         {
             ComboBox operators = new ComboBox();
-            operators.Name = "operatorComboBox" + extraConditions;
+            operators.Name = "operatorComboBox" + extraConditions.ToString() + "_" + sufix;
             operators.Items.Add("OR");
             operators.Items.Add("AND");
             operators.Items.Add("NOT");
@@ -96,21 +103,24 @@ namespace SportActivities.Forms
             operators.Width = 50;
             operators.DropDownStyle = ComboBoxStyle.DropDownList;
 
+            operators.SelectedItem = operators.Items[0];
             
             ComboBox attributes = new ComboBox();
             attributes.Location = new Point(130, 30 * extraConditions);
             attributes.DropDownStyle = ComboBoxStyle.DropDownList;
+            attributes.Name = "attributesComboBox" + extraConditions.ToString() + "_" + sufix;
 
             ComboBox condition = new ComboBox();
             condition.Location = new Point(270, 30 * extraConditions);
             condition.Items.AddRange(conditions);
             condition.Width = 80;
             condition.DropDownStyle = ComboBoxStyle.DropDownList;
+            condition.Name = "conditionComboBox" + extraConditions.ToString() + "_" + sufix;
 
             TextBox conditionValue = new TextBox();
             conditionValue.Location = new Point(370, 30 * extraConditions);
             conditionValue.Width = 130;
-
+            conditionValue.Name = "conditionValue" + extraConditions.ToString() + "_" + sufix;
 
             Point btnLoc = btnFilter.Location;
             btnFilter.Location = new Point(btnLoc.X, btnLoc.Y + 30);
@@ -158,7 +168,7 @@ namespace SportActivities.Forms
 
         private void comboBoxLayer_SelectedIndexChanged(object sender, EventArgs e)
         {
-            populateAttributesCombobox(((ComboboxItem)comboBoxLayer.SelectedItem).Value.ToString(), extraConditions1);
+            populateAttributesCombobox(comboBoxAttributes, ((ComboboxItem)comboBoxLayer.SelectedItem).Value.ToString(), "1", extraConditions1);
         }
 
         public Query getQuery()
@@ -180,7 +190,16 @@ namespace SportActivities.Forms
         {
             extraConditions1++;
 
-            addCondition(Controls.Find("panelQuery", true)[0], extraConditions1);
+            Control panel = Controls.Find("panelQuery", true)[0];
+            addCondition(panel, "1", extraConditions1);
+
+            ComboBox attrsComboBox = (ComboBox)panel.Controls.Find("attributesComboBox" + extraConditions1.ToString() + "_1", true)[0];
+
+            foreach(object item in comboBoxAttributes.Items)
+            {
+                attrsComboBox.Items.Add(item);
+            }
+            attrsComboBox.SelectedItem = attrsComboBox.Items[0];
 
             moveControl(btnAddCondition);
             moveControl(panelQuery2);
@@ -192,7 +211,16 @@ namespace SportActivities.Forms
         {
             extraConditions2++;
 
-            addCondition(Controls.Find("panelQuery2", true)[0], extraConditions2);
+            Control panel = Controls.Find("panelQuery2", true)[0];
+            addCondition(panel, "2", extraConditions2);
+
+            ComboBox attrsComboBox = (ComboBox)panel.Controls.Find("attributesComboBox" + extraConditions2.ToString() + "_2", true)[0];
+
+            foreach (object item in comboBoxAttributes2.Items)
+            {
+                attrsComboBox.Items.Add(item);
+            }
+            attrsComboBox.SelectedItem = attrsComboBox.Items[0];
 
             moveControl(btnAddCondition2);
         }
@@ -207,6 +235,11 @@ namespace SportActivities.Forms
         {
             panelQuery2.Enabled = spatialQueryCheckBox.Checked;
             relationComboBox.Enabled = spatialQueryCheckBox.Checked;
+        }
+
+        private void comboBoxLayer2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            populateAttributesCombobox(comboBoxAttributes2, ((ComboboxItem)comboBoxLayer2.SelectedItem).Value.ToString(), "2", extraConditions2);
         }
     }
 }
