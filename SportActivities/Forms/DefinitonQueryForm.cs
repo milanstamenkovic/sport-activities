@@ -142,6 +142,18 @@ namespace SportActivities.Forms
 
             query.Condition = createCondition(attribute, textBoxValue.Text, comboBoxQuery.SelectedItem.ToString());
 
+            for(int i = 0; i < extraConditions1; ++i)
+            {
+                attribute = ((ComboboxItem)((ComboBox)Controls.Find("attributesComboBox" + (i + 1).ToString() + "_1", true)[0]).SelectedItem).Value.ToString();
+                string condition = ((ComboBox)Controls.Find("conditionComboBox" + (i + 1).ToString() + "_1", true)[0]).SelectedItem.ToString();
+                string conditionValue = ((TextBox)Controls.Find("conditionValue" + (i + 1).ToString() + "_1", true)[0]).Text;
+
+                string _operator = ((ComboBox)Controls.Find("operatorComboBox" + (i + 1).ToString() + "_1", true)[0]).SelectedItem.ToString();
+
+                query.Condition += " " + _operator + " ";
+                query.Condition += createCondition(attribute, conditionValue, condition);
+            }
+
             isQueryDefined = true;
             Close();
         }
