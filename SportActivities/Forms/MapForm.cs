@@ -112,7 +112,6 @@ namespace SportActivities
                         mapBox.Map.Layers.Remove(layers[e.Node.Text].labelLayer);
                     mapBox.Refresh();
                 }
-
             }
         }
 
@@ -307,8 +306,7 @@ namespace SportActivities
                     mapBox.Refresh();
                     mapBox.Invalidate();
 
-                    //FeatureInfoForm fdsForm = new FeatureInfoForm(dataManagement.getFeatureDataSetForLayer(queryLayer));
-                    //fdsForm.Show();
+                    FeatureInfoForm fdsForm = new FeatureInfoForm(dataManagement.getFeatureDataSetForLayer(queryLayer));
                 }
             };
         }

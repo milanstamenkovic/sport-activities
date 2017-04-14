@@ -146,9 +146,7 @@ namespace SportActivities
         public VectorLayer GeometryFilter(LayerCollection layers, IGeometry geometry)
         {
             FeatureDataSet fds = new FeatureDataSet();
-            VectorLayer resultLayer = new VectorLayer("Geometry Layer");
-            resultLayer.CoordinateTransformation = transfCoord;
-            resultLayer.ReverseCoordinateTransformation = reverseTransfCoord;
+            VectorLayer resultLayer = createLayer("Geometry layer");
             Collection<IGeometry> geomColl = new Collection<IGeometry>();
 
             for(int i = 0; i < layers.Count; ++i)
@@ -170,11 +168,7 @@ namespace SportActivities
         public VectorLayer DefinitionQueryFilter(Query query)
         {
             Collection<IGeometry> geometries = new Collection<IGeometry>();
-
-            VectorLayer resultLayer = new VectorLayer("Query Layer");
-            resultLayer.CoordinateTransformation = transfCoord;
-            resultLayer.ReverseCoordinateTransformation = reverseTransfCoord;
-
+            VectorLayer resultLayer = createLayer("Query Layer");
             PostGIS provider = new PostGIS(connectionParams, query.TableName, "geom", "gid");
 
             if (query.Condition != null)
@@ -229,6 +223,12 @@ namespace SportActivities
             return layer;
         }
 
-
+        private VectorLayer createLayer(string name)
+        {
+            VectorLayer layer = new VectorLayer(name);
+            layer.CoordinateTransformation = transfCoord;
+            layer.ReverseCoordinateTransformation = reverseTransfCoord;
+            return layer;
+        }
     }
 }

@@ -8,39 +8,13 @@ namespace SportActivities.DataModels
 {
     public class Query
     {
-        private string tableName;
-        private string condition;
-        private string relation;
-
-        public Query()
+        public static Query getInstance()
         {
-            tableName = null;
-            condition = null;
-            relation = null;
+            return new Query();
         }
 
-        public string TableName
-        {
-            get
-            {
-                return this.tableName;
-            }
-            set
-            {
-                this.tableName = value;
-            }
-        }
+        public string TableName { get; set; }
 
-        public string Condition
-        {
-            get
-            {
-                return condition;
-            }
-            set
-            {
-                condition = value;
-            }
-        }
+        public string Condition { get; set; }
     }
 }
