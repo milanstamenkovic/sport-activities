@@ -149,11 +149,22 @@
   <ItemGroup>
     <Compile Include="DataManagement.cs" />
     <Compile Include="DataModels\ComboboxItem.cs" />
-    <Compile Include="DataModels\EnumUtil.cs" />
     <Compile Include="DataModels\LayerModel.cs" />
+    <Compile Include="DataModels\Query.cs" />
+    <Compile Include="Forms\DefinitonQueryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DefinitonQueryForm.Designer.cs">
+      <DependentUpon>DefinitonQueryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FeatureInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FeatureInfoForm.Designer.cs">
+      <DependentUpon>FeatureInfoForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GdalConfiguration.cs" />
     <Compile Include="GdalNativeConfiguration.cs" />
-    <Compile Include="DataModels\LayerManager.cs" />
     <Compile Include="DataModels\LayerRecord.cs" />
     <Compile Include="Forms\LayerSettings.cs">
       <SubType>Form</SubType>
@@ -169,6 +180,13 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils.cs" />
+    <EmbeddedResource Include="Forms\DefinitonQueryForm.resx">
+      <DependentUpon>DefinitonQueryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FeatureInfoForm.resx">
+      <DependentUpon>FeatureInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\LayerSettings.resx">
       <DependentUpon>LayerSettings.cs</DependentUpon>
     </EmbeddedResource>

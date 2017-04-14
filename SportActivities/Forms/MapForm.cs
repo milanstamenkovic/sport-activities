@@ -3,12 +3,15 @@ using Npgsql;
 using SharpMap.Layers;
 using SharpMap.Forms;
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms; 
+using System.Windows.Forms;
 using GeoAPI.CoordinateSystems;
 using ProjNet.CoordinateSystems;
 using SportActivities.DataModels;
+using SharpMap.Data;
+using GeoAPI.Geometries;
+using SportActivities.Forms;
 
 namespace SportActivities
 {
@@ -19,12 +22,13 @@ namespace SportActivities
         private List<LayerRecord> layerRecords;
         private DataManagement dataManagement;
         private bool showLabels;
+        private bool showFeatureInfo;
 
         public MapForm()
         {
             InitializeComponent();
 
-            dataManagement = new DataManagement();
+            dataManagement = DataManagement.Instance;
 
             layers = new Dictionary<string, LayerModel>();
             layerRecords = dataManagement.GetAllLayers();
@@ -36,10 +40,10 @@ namespace SportActivities
             mapBox.Map.BackgroundLayer.Add(CreateBackgroundLayer());
 
             mapBox.Map.ZoomToExtents();
-
-            mapBox.Refresh();
             mapBox.EnableShiftButtonDragRectangleZoom = true;
+
             mapBox.ActiveTool = MapBox.Tools.Pan;
+            mapBox.Refresh();
         }
 
         private void createVectorAndLabelInitialLayers()
@@ -78,43 +82,12 @@ namespace SportActivities
             return new TileLayer(new BruTile.Web.OsmTileSource(), "OSM");
         }
 
-        private void mapBox_MouseMove(GeoAPI.Geometries.Coordinate worldPos, MouseEventArgs imagePos)
+        private void mapBox_MouseMove(Coordinate worldPos, MouseEventArgs imagePos)
         {
-            IProjectedCoordinateSystem utmProj = createUtmProjection(34);
-            IGeographicCoordinateSystem geoCs = utmProj.GeographicCoordinateSystem;
-            ICoordinateTransformation transform = dataManagement.ctFact.CreateFromCoordinateSystems(geoCs, utmProj);
-            double[] coordsGeo = new double[2];
-            double[] coordsUtm;
-            coordsGeo[0] = worldPos.X;
-            coordsGeo[1] = worldPos.Y;
-            coordsUtm = transform.MathTransform.Transform(coordsGeo);
-            worldPos.X = coordsUtm[0];
-            worldPos.Y = coordsUtm[1];
-
-            labelMouseCoords.Text = worldPos.X + ", " + worldPos.Y;
+            Coordinate coord = dataManagement.reverseTransfCoord.MathTransform.Transform(worldPos);
+            latStatusBar.Text = Convert.ToString(Math.Round(coord.X, 5));
+            lngStatusBar.Text = Convert.ToString(Math.Round(coord.Y, 5));
         } 
-
-        private IProjectedCoordinateSystem createUtmProjection(int utmZone)
-        {
-            CoordinateSystemFactory cFac = new CoordinateSystemFactory();
-            IEllipsoid elipsoid = cFac.CreateFlattenedSphere("WGS 84", 6378137, 298.257, LinearUnit.Metre);
-            IHorizontalDatum datum = cFac.CreateHorizontalDatum("WGS_1984", DatumType.HD_Geocentric, elipsoid, null);
-            IGeographicCoordinateSystem gcs = cFac.CreateGeographicCoordinateSystem("WGS 84", AngularUnit.Degrees, datum,
-                PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East), new AxisInfo("Lat", AxisOrientationEnum.North));
-
-            List<ProjectionParameter> parameters = new List<ProjectionParameter>();
-
-            parameters.Add(new ProjectionParameter("latitude_of_origin", 0.0));
-            parameters.Add(new ProjectionParameter("central_meridian", -183 + 6 * utmZone));
-            parameters.Add(new ProjectionParameter("scale_factor", 0.9996));
-            parameters.Add(new ProjectionParameter("false_easting", 500000));
-            parameters.Add(new ProjectionParameter("false_northing", 0.0));
-            IProjection projection = cFac.CreateProjection("Transverse Mercator", "Transverse Mercator", parameters);
-
-
-            return cFac.CreateProjectedCoordinateSystem("WGS 84 / UTM zone " + utmZone + "N", gcs, projection, LinearUnit.Metre,
-                new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
-        }
 
         private void layersTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -139,7 +112,6 @@ namespace SportActivities
                         mapBox.Map.Layers.Remove(layers[e.Node.Text].labelLayer);
                     mapBox.Refresh();
                 }
-
             }
         }
 
@@ -174,6 +146,7 @@ namespace SportActivities
         private void renderActiveLayers()
         {
             mapBox.Map.Layers.Clear();
+            mapBox.Map.BackgroundLayer.Clear();
 
             foreach(TreeNode layerNode in layersTreeView.Nodes)
                 if (layerNode.Checked)
@@ -183,6 +156,12 @@ namespace SportActivities
                 foreach (TreeNode layerNode in layersTreeView.Nodes)
                     if (layerNode.Checked)
                         mapBox.Map.Layers.Add(layers[layerNode.Text].labelLayer);
+
+            if (mapBox.Map.Layers.Count > 0)
+                mapBox.Map.ZoomToExtents();
+
+            if (mapCheckBox.Checked)
+                mapBox.Map.BackgroundLayer.Add(CreateBackgroundLayer());
 
             mapBox.Refresh();
         }
@@ -212,13 +191,16 @@ namespace SportActivities
             renderActiveLayers();
         }
 
-        private void mapBox_GeometryDefined(GeoAPI.Geometries.IGeometry geometry)
+        private void mapBox_GeometryDefined(IGeometry geometry)
         {
-            //foreach (VectorLayer layer in layers.Values)
-            //{
-            //    if(layer.IsQueryEnabled)
-            //        layer.
-            //}
+
+            VectorLayer geometryLayer = dataManagement.GeometryFilter(mapBox.Map.Layers, geometry);
+            mapBox.Map.Layers.Clear();
+
+            mapBox.Map.Layers.Add(geometryLayer);
+
+            mapBox.Refresh();
+            mapBox.Invalidate();
         }
 
         private void toolsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -272,13 +254,61 @@ namespace SportActivities
             layerSettingsForm.ShowDialog();
         }
 
-        private void btnRouting_Click(object sender, EventArgs e)
+        private void mapBox_MouseClick(object sender, MouseEventArgs e)
         {
+            if(showFeatureInfo)
+            {
+                FeatureDataSet fds = dataManagement.GetFeatureDataSet(mapBox.Map.Layers, mapBox.Map.ImageToWorld(e.Location), mapBox.Map.Zoom / 100.0);
+                FeatureInfoForm form = new FeatureInfoForm(fds);
+            }
+        }
+
+        private void btnFeatureInfo_Click(object sender, EventArgs e)
+        {
+            showFeatureInfo = !showFeatureInfo;
+
+            if(showFeatureInfo)
+            {
+                btnFeatureInfo.BackColor = SystemColors.ActiveCaption;
+            }
+            else
+            {
+                btnFeatureInfo.BackColor = SystemColors.Control;
+            }
+        }
+
+        private void btnRouting_Click(object sender, EventArgs e)
+        { 
             //mapBox.Map.Layers.Add(dataManagement.createRoutingLayer(new Point(-2236233, 595509391), new Point(210713, 595528618)));
-            //mapBox.Refresh();
+            //mapBox.Refresh(); 
+        }
 
+        private void btnQuery_Click(object sender, EventArgs e)
+        {
+            using (DefinitonQueryForm form = new DefinitonQueryForm())
+            {
+                form.ShowDialog();
 
+                Query query = form.getQuery();
 
+                if(query != null)
+                {
+                    VectorLayer queryLayer = dataManagement.DefinitionQueryFilter(query);
+                    mapBox.Map.Layers.Clear();
+                    mapBox.Map.BackgroundLayer.Clear();
+
+                    mapBox.Map.Layers.Add(queryLayer);
+                    mapBox.Map.ZoomToExtents();
+
+                    if (mapCheckBox.Checked)
+                        mapBox.Map.BackgroundLayer.Add(CreateBackgroundLayer());
+
+                    mapBox.Refresh();
+                    mapBox.Invalidate();
+
+                    FeatureInfoForm fdsForm = new FeatureInfoForm(dataManagement.getFeatureDataSetForLayer(queryLayer));
+                }
+            };
         }
     }
 }

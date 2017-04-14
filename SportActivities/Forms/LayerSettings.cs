@@ -14,14 +14,12 @@ namespace SportActivities
     {
         private MapBox mapBox;
         private LayerModel layer;
-        private DataManagement dataManagement;
         private string geometryType;
 
         public LayerSettings(ref MapBox mapBox, ref LayerModel layer)
         {
             InitializeComponent();
 
-            dataManagement = new DataManagement();
             this.mapBox = mapBox;
             this.layer = layer;
 
@@ -52,26 +50,20 @@ namespace SportActivities
 
         private void initLayerLabelComboBox()
         {
-            List<string> attributes = dataManagement.getAllLayerAttributes(layer.vectorLayer.LayerName);
+            List<object> attributes = DataManagement.Instance.getAllLayerAttributes(layer.vectorLayer.LayerName);
 
-            foreach(string attr in attributes)
+            foreach(object attr in attributes)
             {
                 ComboboxItem item = ComboboxItem.getInstance();
-                item.Value = attr;
-                item.Text = beautify(attr);
+                item.Value = attr.ToString();
+                item.Text = Utils.beautify(attr.ToString());
                 comboboxLabel.Items.Add(item);
             }
             
             comboboxLabel.SelectedIndex = comboboxLabel.FindStringExact(layer.labelLayer.LabelColumn);
         }
 
-        private string beautify(string param)
-        {
-            string result = param.First().ToString().ToUpper() + param.Substring(1);
-
-            result = result.Replace("_", " ");
-            return result;
-        }
+       
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {

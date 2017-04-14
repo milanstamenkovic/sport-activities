@@ -8,6 +8,14 @@ namespace SportActivities
 {
     public class ComboboxItem
     {
+        public ComboboxItem() { }
+
+        public ComboboxItem(string text, object value)
+        {
+            Text = text;
+            Value = value;
+        }
+
         public static ComboboxItem getInstance()
         {
             return new ComboboxItem();
@@ -20,5 +28,7 @@ namespace SportActivities
         {
             return Text;
         }
+
+
     }
 }
