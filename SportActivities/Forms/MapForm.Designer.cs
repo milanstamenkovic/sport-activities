@@ -174,7 +174,7 @@
             this.drawPolygonToolStripMenuItem,
             this.queryBoxToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
             this.toolsToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolsToolStripMenuItem_DropDownItemClicked);
             // 
@@ -268,7 +268,7 @@
             // 
             // btnRouting
             // 
-            this.btnRouting.Location = new System.Drawing.Point(16, 504);
+            this.btnRouting.Location = new System.Drawing.Point(16, 497);
             this.btnRouting.Name = "btnRouting";
             this.btnRouting.Size = new System.Drawing.Size(99, 23);
             this.btnRouting.TabIndex = 12;
