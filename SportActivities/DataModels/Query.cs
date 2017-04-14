@@ -10,11 +10,13 @@ namespace SportActivities.DataModels
     {
         private string tableName;
         private string condition;
+        private string relation;
 
         public Query()
         {
             tableName = null;
             condition = null;
+            relation = null;
         }
 
         public string TableName

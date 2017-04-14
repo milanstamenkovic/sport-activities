@@ -161,16 +161,16 @@ namespace SportActivities
                     foreach (FeatureDataRow fdr in fds.Tables[i].Rows)
                         geomColl.Add(fdr.Geometry);
                 }
-                
             }
 
             resultLayer.DataSource = new GeometryProvider(geomColl);
             return resultLayer;
-
         }
 
         public VectorLayer DefinitionQueryFilter(Query query)
         {
+            Collection<IGeometry> geometries = new Collection<IGeometry>();
+
             VectorLayer resultLayer = new VectorLayer("Query Layer");
             resultLayer.CoordinateTransformation = transfCoord;
             resultLayer.ReverseCoordinateTransformation = reverseTransfCoord;
@@ -181,6 +181,7 @@ namespace SportActivities
                 provider.DefinitionQuery = query.Condition;
 
             resultLayer.DataSource = provider;
+            
             return resultLayer;
         }
 

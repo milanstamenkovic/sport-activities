@@ -183,11 +183,6 @@
             this.relationComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.relationComboBox.Enabled = false;
             this.relationComboBox.FormattingEnabled = true;
-            this.relationComboBox.Items.AddRange(new object[] {
-            "Contains",
-            "Within",
-            "Intersect",
-            "In Distance"});
             this.relationComboBox.Location = new System.Drawing.Point(140, 71);
             this.relationComboBox.Name = "relationComboBox";
             this.relationComboBox.Size = new System.Drawing.Size(83, 21);

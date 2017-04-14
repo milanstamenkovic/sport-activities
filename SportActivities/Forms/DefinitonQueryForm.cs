@@ -22,15 +22,26 @@ namespace SportActivities.Forms
             "="
         };
 
-        private Query query;
-        private bool isQueryDefined;
+        private ComboboxItem[] relations = new ComboboxItem[]
+        {
+            new ComboboxItem("Contains", "_st_contains"),
+            new ComboboxItem("Intersects", "_st_intersects"),
+            new ComboboxItem("Within", "_st_within"),
+            new ComboboxItem("In distance", "_st_distance")
+        };
+
+        private Query query = null;
 
         private int extraConditions1;
         private int extraConditions2;
 
+        private List<LayerRecord> records;
+
         public DefinitonQueryForm()
         {
             InitializeComponent();
+
+            records = DataManagement.Instance.GetAllLayers();
 
             extraConditions1 = extraConditions2 = 0;
 
@@ -43,12 +54,11 @@ namespace SportActivities.Forms
             comboBoxQuery.Items.AddRange(conditions);
             comboBoxQuery2.Items.AddRange(conditions);
 
-            isQueryDefined = false;
+            relationComboBox.Items.AddRange(relations);
         }
 
         private void populateLayersCombobox(ComboBox combobox)
         {
-            List<LayerRecord> records = DataManagement.Instance.GetAllLayers();
 
             foreach(LayerRecord record in records)
             {
@@ -134,17 +144,38 @@ namespace SportActivities.Forms
 
         private void btnFilter_Click(object sender, EventArgs e)
         {
+           
             query = new Query();
 
             query.TableName = ((ComboboxItem)comboBoxLayer.SelectedItem).Value.ToString();
 
             string attribute = ((ComboboxItem)comboBoxAttributes.SelectedItem).Value.ToString();
-
             query.Condition = createCondition(attribute, textBoxValue.Text, comboBoxQuery.SelectedItem.ToString());
 
-            for(int i = 0; i < extraConditions1; ++i)
+            addExtraConditions(query, extraConditions1);
+
+            
+            if (spatialQueryCheckBox.Checked)
             {
-                attribute = ((ComboboxItem)((ComboBox)Controls.Find("attributesComboBox" + (i + 1).ToString() + "_1", true)[0]).SelectedItem).Value.ToString();
+                string tableName2 = ((ComboboxItem)comboBoxLayer2.SelectedItem).Value.ToString();
+                query.Condition += " AND gid in (select " + query.TableName + ".gid from " + query.TableName + "," + tableName2 + " where ";
+                query.Condition += ((ComboboxItem)relationComboBox.SelectedItem).Value.ToString();
+                query.Condition += "(" + query.TableName + ".geom," + tableName2 + ".geom)";
+
+                attribute = ((ComboboxItem)comboBoxAttributes2.SelectedItem).Value.ToString();
+
+                query.Condition += " AND " + tableName2 + ".gid in (select gid from " + tableName2 + " where " 
+                    + createCondition(attribute, textBoxValue2.Text, comboBoxQuery2.SelectedItem.ToString()) + "))";
+                
+            }
+            Close();
+        }
+
+        private void addExtraConditions(Query query, int extraConditions)
+        {
+            for (int i = 0; i < extraConditions; ++i)
+            {
+                string attribute = ((ComboboxItem)((ComboBox)Controls.Find("attributesComboBox" + (i + 1).ToString() + "_1", true)[0]).SelectedItem).Value.ToString();
                 string condition = ((ComboBox)Controls.Find("conditionComboBox" + (i + 1).ToString() + "_1", true)[0]).SelectedItem.ToString();
                 string conditionValue = ((TextBox)Controls.Find("conditionValue" + (i + 1).ToString() + "_1", true)[0]).Text;
 
@@ -153,9 +184,6 @@ namespace SportActivities.Forms
                 query.Condition += " " + _operator + " ";
                 query.Condition += createCondition(attribute, conditionValue, condition);
             }
-
-            isQueryDefined = true;
-            Close();
         }
 
         private string createCondition(string attribute, string value, string sign)
@@ -186,11 +214,6 @@ namespace SportActivities.Forms
         public Query getQuery()
         {
            return query;
-        }
-
-        public bool IsQueryDefined()
-        {
-            return isQueryDefined;
         }
 
         private void DefinitonQueryForm_Load(object sender, EventArgs e)

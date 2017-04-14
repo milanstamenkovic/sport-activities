@@ -290,10 +290,10 @@ namespace SportActivities
             {
                 form.ShowDialog();
 
-                if(form.IsQueryDefined())
-                {
-                    Query query = form.getQuery();
+                Query query = form.getQuery();
 
+                if(query != null)
+                {
                     VectorLayer queryLayer = dataManagement.DefinitionQueryFilter(query);
                     mapBox.Map.Layers.Clear();
                     mapBox.Map.BackgroundLayer.Clear();
@@ -307,8 +307,8 @@ namespace SportActivities
                     mapBox.Refresh();
                     mapBox.Invalidate();
 
-                    FeatureInfoForm fdsForm = new FeatureInfoForm(dataManagement.getFeatureDataSetForLayer(queryLayer));
-                    fdsForm.Show();
+                    //FeatureInfoForm fdsForm = new FeatureInfoForm(dataManagement.getFeatureDataSetForLayer(queryLayer));
+                    //fdsForm.Show();
                 }
             };
         }
