@@ -91,10 +91,6 @@ C:\Users\Simon\Desktop\sport-activities\SportActivities\obj\Debug\SportActivitie
 C:\Users\Simon\Desktop\sport-activities\SportActivities\obj\Debug\SportActivities.pdb
 C:\Users\Simon\Desktop\sport-activities\SportActivities\obj\Debug\SportActivities.csprojResolveAssemblyReference.cache
 C:\Users\Simon\Desktop\sport-activities\SportActivities\obj\Debug\SportActivities.LayerSettings.resources
-C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.LayerSettings.resources
-C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.MapForm.resources
-C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.Properties.Resources.resources
-C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.csproj.GenerateResource.Cache
 C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\bin\Debug\SportActivities.exe.config
 C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\bin\Debug\SportActivities.exe
 C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\bin\Debug\SportActivities.pdb
@@ -135,8 +131,12 @@ C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\bin\Debug\fi\Npgsql.
 C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\bin\Debug\fr\Npgsql.resources.dll
 C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\bin\Debug\ja\Npgsql.resources.dll
 C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\bin\Debug\zh-CN\Npgsql.resources.dll
+C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.Forms.DefinitonQueryForm.resources
+C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.Forms.FeatureInfoForm.resources
+C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.LayerSettings.resources
+C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.MapForm.resources
+C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.Properties.Resources.resources
+C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.csproj.GenerateResource.Cache
 C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.exe
 C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.pdb
 C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.csprojResolveAssemblyReference.cache
-C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.Forms.FeatureInfoForm.resources
-C:\Users\Milan\Desktop\GIS\sport-activities\SportActivities\obj\Debug\SportActivities.Forms.DefinitonQueryForm.resources

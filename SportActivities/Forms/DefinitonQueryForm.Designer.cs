@@ -43,8 +43,11 @@
             this.textBoxValue2 = new System.Windows.Forms.TextBox();
             this.relationComboBox = new System.Windows.Forms.ComboBox();
             this.spatialQueryCheckBox = new System.Windows.Forms.CheckBox();
+            this.relationOperationCombobox = new System.Windows.Forms.ComboBox();
+            this.distanceInput = new System.Windows.Forms.NumericUpDown();
             this.panelQuery.SuspendLayout();
             this.panelQuery2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.distanceInput)).BeginInit();
             this.SuspendLayout();
             // 
             // comboBoxAttributes
@@ -72,6 +75,7 @@
             this.textBoxValue.Name = "textBoxValue";
             this.textBoxValue.Size = new System.Drawing.Size(130, 20);
             this.textBoxValue.TabIndex = 2;
+            this.textBoxValue.Text = "0";
             // 
             // comboBoxLayer
             // 
@@ -177,16 +181,18 @@
             this.textBoxValue2.Name = "textBoxValue2";
             this.textBoxValue2.Size = new System.Drawing.Size(130, 20);
             this.textBoxValue2.TabIndex = 2;
+            this.textBoxValue2.Text = "0";
             // 
             // relationComboBox
             // 
             this.relationComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.relationComboBox.Enabled = false;
             this.relationComboBox.FormattingEnabled = true;
-            this.relationComboBox.Location = new System.Drawing.Point(140, 71);
+            this.relationComboBox.Location = new System.Drawing.Point(215, 71);
             this.relationComboBox.Name = "relationComboBox";
             this.relationComboBox.Size = new System.Drawing.Size(83, 21);
             this.relationComboBox.TabIndex = 8;
+            this.relationComboBox.SelectedIndexChanged += new System.EventHandler(this.relationComboBox_SelectedIndexChanged);
             // 
             // spatialQueryCheckBox
             // 
@@ -199,6 +205,30 @@
             this.spatialQueryCheckBox.UseVisualStyleBackColor = true;
             this.spatialQueryCheckBox.CheckedChanged += new System.EventHandler(this.spatialQueryCheckBox_CheckedChanged);
             // 
+            // relationOperationCombobox
+            // 
+            this.relationOperationCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.relationOperationCombobox.Enabled = false;
+            this.relationOperationCombobox.FormattingEnabled = true;
+            this.relationOperationCombobox.Location = new System.Drawing.Point(141, 71);
+            this.relationOperationCombobox.Name = "relationOperationCombobox";
+            this.relationOperationCombobox.Size = new System.Drawing.Size(56, 21);
+            this.relationOperationCombobox.TabIndex = 10;
+            // 
+            // distanceInput
+            // 
+            this.distanceInput.DecimalPlaces = 1;
+            this.distanceInput.Enabled = false;
+            this.distanceInput.Location = new System.Drawing.Point(305, 71);
+            this.distanceInput.Maximum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.distanceInput.Name = "distanceInput";
+            this.distanceInput.Size = new System.Drawing.Size(66, 20);
+            this.distanceInput.TabIndex = 11;
+            // 
             // DefinitonQueryForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -206,6 +236,8 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(526, 208);
+            this.Controls.Add(this.distanceInput);
+            this.Controls.Add(this.relationOperationCombobox);
             this.Controls.Add(this.spatialQueryCheckBox);
             this.Controls.Add(this.relationComboBox);
             this.Controls.Add(this.panelQuery2);
@@ -218,6 +250,7 @@
             this.panelQuery.PerformLayout();
             this.panelQuery2.ResumeLayout(false);
             this.panelQuery2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.distanceInput)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -240,5 +273,7 @@
         private System.Windows.Forms.TextBox textBoxValue2;
         private System.Windows.Forms.ComboBox relationComboBox;
         private System.Windows.Forms.CheckBox spatialQueryCheckBox;
+        private System.Windows.Forms.ComboBox relationOperationCombobox;
+        private System.Windows.Forms.NumericUpDown distanceInput;
     }
 }
