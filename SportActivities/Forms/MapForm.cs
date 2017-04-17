@@ -1,17 +1,13 @@
-﻿using GeoAPI.CoordinateSystems.Transformations;
-using Npgsql;
-using SharpMap.Layers;
+﻿using SharpMap.Layers;
 using SharpMap.Forms;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
-using GeoAPI.CoordinateSystems;
-using ProjNet.CoordinateSystems;
+using System.Windows.Forms; 
 using SportActivities.DataModels;
 using SharpMap.Data;
 using GeoAPI.Geometries;
-using SportActivities.Forms;
+using SportActivities.Forms; 
 
 namespace SportActivities
 {
@@ -23,6 +19,9 @@ namespace SportActivities
         private DataManagement dataManagement;
         private bool showLabels;
         private bool showFeatureInfo;
+        private bool showRouting;
+        private bool startPointChosen; 
+        private NetTopologySuite.Geometries.Point[] routingPoints;
 
         public MapForm()
         {
@@ -32,6 +31,7 @@ namespace SportActivities
 
             layers = new Dictionary<string, LayerModel>();
             layerRecords = dataManagement.GetAllLayers();
+            routingPoints = new NetTopologySuite.Geometries.Point[2];
 
             createVectorAndLabelInitialLayers();
 
@@ -198,14 +198,33 @@ namespace SportActivities
         }
 
         private void mapBox_GeometryDefined(IGeometry geometry)
-        {
-            VectorLayer geometryLayer = dataManagement.GeometryFilter(mapBox.Map.Layers, geometry);
-            mapBox.Map.Layers.Clear();
+        { 
+            if (showRouting)
+            {                 
+                if (!startPointChosen)
+                {
+                    startPointChosen = true;
+                    routingPoints[0] = (NetTopologySuite.Geometries.Point) geometry;
+                }
+                else
+                {
+                    startPointChosen = false;
+                    routingPoints[1] = (NetTopologySuite.Geometries.Point) geometry;
 
-            mapBox.Map.Layers.Add(geometryLayer);
+                    mapBox.Map.Layers.Add(dataManagement.createRoutingLayer(routingPoints));
+                    mapBox.Refresh(); 
+                }
+            }
+            else
+            {
+                VectorLayer geometryLayer = dataManagement.GeometryFilter(mapBox.Map.Layers, geometry);
+                mapBox.Map.Layers.Clear(); 
 
-            mapBox.Refresh();
-            mapBox.Invalidate();
+                mapBox.Map.Layers.Add(geometryLayer);
+
+                mapBox.Refresh();
+                mapBox.Invalidate();
+            }
         }
 
         private void toolsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -284,8 +303,20 @@ namespace SportActivities
 
         private void btnRouting_Click(object sender, EventArgs e)
         {
-            mapBox.Map.Layers.Add(dataManagement.createRoutingLayer(new Coordinate(21.8660417174969, 43.3815275647817), new Coordinate(21.8890036212656, 43.3591535811185)));
-            mapBox.Refresh();
+            showRouting = !showRouting;
+            startPointChosen = false;
+            if (showRouting)
+            {
+                btnRouting.BackColor = SystemColors.ActiveCaption;
+                mapBox.ActiveTool = MapBox.Tools.DrawPoint;
+            }
+            else
+            {
+                btnRouting.BackColor = SystemColors.Control;
+                activeToolLabel.Text = "Pan";
+                mapBox.ActiveTool = MapBox.Tools.Pan;
+            }
+
         }
 
         private void btnQuery_Click(object sender, EventArgs e)

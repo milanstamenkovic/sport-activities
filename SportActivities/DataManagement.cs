@@ -207,8 +207,10 @@ namespace SportActivities
             return fds;
         }
         
-        public VectorLayer createRoutingLayer(Coordinate start, Coordinate end)
+        public VectorLayer createRoutingLayer(NetTopologySuite.Geometries.Point[] routingPoints)
         {
+            Coordinate start = reverseTransfCoord.MathTransform.Transform(routingPoints[0].Coordinate);
+            Coordinate end = reverseTransfCoord.MathTransform.Transform(routingPoints[1].Coordinate);
             //prepare temp table
             using (NpgsqlConnection conn = new NpgsqlConnection(connectionParams))
             {
