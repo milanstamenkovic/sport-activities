@@ -55,8 +55,6 @@ namespace SportActivities.Forms
             records = DataManagement.Instance.GetAllLayers();
             createLayerItems();
             comboBoxLayer.DataSource = records.Select(r => r.TableName).ToList();
-            //comboBoxLayer.SelectedItem = comboBoxLayer.Items[0];
-            //populateAttributesCombobox(comboBoxAttributes, comboBoxLayer.SelectedText, "1", extraConditions1);
 
             comboBoxQuery.Items.AddRange(conditions);
             comboBoxQuery.SelectedItem = comboBoxQuery.Items[2];
@@ -66,6 +64,9 @@ namespace SportActivities.Forms
 
             relationComboBox.Items.AddRange(relations);
             relationOperationCombobox.Items.AddRange(operations);
+
+            relationComboBox.SelectedItem = relationComboBox.Items[0];
+            relationOperationCombobox.SelectedItem = relationOperationCombobox.Items[0];
         }
 
         private void createLayerItems()
@@ -75,27 +76,6 @@ namespace SportActivities.Forms
             layerItems = new ComboboxItem[records.Count];
             for(int i = 0; i < records.Count; ++i)
                 layerItems[i] = new ComboboxItem(Utils.beautify(records[i].TableName), records[i].TableName);
-        }
-
-        private void populateLayerCombobox(ComboBox combobox, int selectedIndex)
-        {
-            comboBoxLayer.Items.Clear();
-
-            foreach (ComboboxItem item in layerItems)
-                combobox.Items.Add(item);
-            combobox.SelectedItem = combobox.Items[selectedIndex];
-        }
-
-        private void populateLayersComboboxies(object selectedItem1, object selectedItem2)
-        {
-            if (comboBoxLayer.Items.Contains(selectedItem2))
-                comboBoxLayer.Items.Remove(selectedItem2);
-
-            if(comboBoxLayer2.Items.Contains(selectedItem1))
-                comboBoxLayer2.Items.Remove(selectedItem1);
-
-            populateAttributesCombobox(comboBoxAttributes, ((ComboboxItem)comboBoxLayer.SelectedItem).Value.ToString(), "1", extraConditions1);
-            populateAttributesCombobox(comboBoxAttributes2, ((ComboboxItem)comboBoxLayer2.SelectedItem).Value.ToString(), "2", extraConditions2);
         }
 
         private void populateAttributesCombobox(ComboBox comboBoxAttrs, string layer, string sufix, int extraConditions)
@@ -153,6 +133,7 @@ namespace SportActivities.Forms
             condition.Width = 80;
             condition.DropDownStyle = ComboBoxStyle.DropDownList;
             condition.Name = "conditionComboBox" + extraConditions.ToString() + "_" + sufix;
+            condition.SelectedItem = condition.Items[0];
 
             TextBox conditionValue = new TextBox();
             conditionValue.Location = new Point(370, 30 * extraConditions);
@@ -166,21 +147,24 @@ namespace SportActivities.Forms
             parentPanel.Controls.Add(attributes);
             parentPanel.Controls.Add(condition);
             parentPanel.Controls.Add(conditionValue);
-
         }
 
         private void btnFilter_Click(object sender, EventArgs e)
         {
-
             query = new Query();
-
             query.TableName = comboBoxLayer.SelectedItem.ToString();
 
             string attribute = ((ComboboxItem)comboBoxAttributes.SelectedItem).Value.ToString();
+            
             query.Condition = createCondition(attribute, textBoxValue.Text, comboBoxQuery.SelectedItem.ToString());
-
             query.Condition = addExtraConditions(query.Condition, extraConditions1, "_1");
 
+            if (textBoxValue.Text.Equals("") || query.Condition == null)
+            {
+                MessageBox.Show("You didn't specified all values");
+                query = null;
+                return;
+            }
 
             if (spatialQueryCheckBox.Checked)
             {
@@ -203,8 +187,15 @@ namespace SportActivities.Forms
 
                 attribute = ((ComboboxItem)comboBoxAttributes2.SelectedItem).Value.ToString();
 
+              
                 string condition2 = createCondition(attribute, textBoxValue2.Text, comboBoxQuery2.SelectedItem.ToString());
                 condition2 = addExtraConditions(condition2, extraConditions2, "_2");
+                if (textBoxValue2.Text.Equals("") || condition2 == null)
+                {
+                    MessageBox.Show("You didn't specified all values");
+                    query = null;
+                    return;
+                }
 
                 query.Condition += " AND " + tableName2 + ".gid in (select gid from " + tableName2 + " where "
                     + condition2 + "))";
@@ -220,7 +211,10 @@ namespace SportActivities.Forms
                 string attribute = ((ComboboxItem)((ComboBox)Controls.Find("attributesComboBox" + (i + 1).ToString() + sufix, true)[0]).SelectedItem).Value.ToString();
                 string condition = ((ComboBox)Controls.Find("conditionComboBox" + (i + 1).ToString() + sufix, true)[0]).SelectedItem.ToString();
                 string conditionValue = ((TextBox)Controls.Find("conditionValue" + (i + 1).ToString() + sufix, true)[0]).Text;
-
+                if(conditionValue.Equals(""))
+                {
+                    return null;
+                }
                 string _operator = ((ComboboxItem)((ComboBox)Controls.Find("operatorComboBox" + (i + 1).ToString() + sufix, true)[0]).SelectedItem).Value.ToString();
 
                 resultCondition += " " + _operator + " ";
@@ -261,11 +255,6 @@ namespace SportActivities.Forms
         public Query getQuery()
         {
             return query;
-        }
-
-        private void DefinitonQueryForm_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void btnAddCondition_Click_1(object sender, EventArgs e)
@@ -323,14 +312,9 @@ namespace SportActivities.Forms
                 = spatialQueryCheckBox.Checked;
 
             if (spatialQueryCheckBox.Checked)
-            {
                 comboBoxLayer2.DataSource = records.Where(y => y.TableName != comboBoxLayer.SelectedItem.ToString()).Select(x => x.TableName).ToList();
-                comboBoxLayer.DataSource = records.Where(y => y.TableName != comboBoxLayer2.SelectedItem.ToString()).Select(x => x.TableName).ToList();
-            }
             else
-            {
                 comboBoxLayer.DataSource = records.Select(x => x.TableName).ToList();
-            }
         }
 
         private void comboBoxLayer2_SelectedIndexChanged(object sender, EventArgs e)
@@ -341,13 +325,9 @@ namespace SportActivities.Forms
         private void relationComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (relationComboBox.Items.IndexOf(relationComboBox.SelectedItem) > 2)
-            {
                 distanceInput.Enabled = true;
-            }
             else
-            {
                 distanceInput.Enabled = false;
-            }
         }
     }
 }

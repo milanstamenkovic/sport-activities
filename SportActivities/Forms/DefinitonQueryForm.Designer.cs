@@ -245,7 +245,6 @@
             this.Controls.Add(this.btnFilter);
             this.Name = "DefinitonQueryForm";
             this.Text = "DefinitonQueryForm";
-            this.Load += new System.EventHandler(this.DefinitonQueryForm_Load);
             this.panelQuery.ResumeLayout(false);
             this.panelQuery.PerformLayout();
             this.panelQuery2.ResumeLayout(false);

@@ -115,6 +115,12 @@ namespace SportActivities
             }
         }
 
+        private void uncheckLayerTreeView()
+        {
+            foreach (TreeNode node in layersTreeView.Nodes)
+                node.Checked = false;
+        }
+
         private void layersTreeView_DragDrop(object sender, DragEventArgs e)
         {
             TreeNode NewNode;
@@ -193,7 +199,6 @@ namespace SportActivities
 
         private void mapBox_GeometryDefined(IGeometry geometry)
         {
-
             VectorLayer geometryLayer = dataManagement.GeometryFilter(mapBox.Map.Layers, geometry);
             mapBox.Map.Layers.Clear();
 
@@ -293,6 +298,7 @@ namespace SportActivities
 
                 if(query != null)
                 {
+                    uncheckLayerTreeView();
                     VectorLayer queryLayer = dataManagement.DefinitionQueryFilter(query);
                     mapBox.Map.Layers.Clear();
                     mapBox.Map.BackgroundLayer.Clear();
