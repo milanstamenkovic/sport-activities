@@ -94,7 +94,7 @@ namespace SportActivities
             {
                 conn.Open();
 
-                using (NpgsqlCommand command = new NpgsqlCommand("select * from geometry_columns where f_table_schema = 'public';", conn))
+                using (NpgsqlCommand command = new NpgsqlCommand("select * from geometry_columns where f_table_schema = 'public' and f_geometry_column = 'geom';", conn))
                 {
 
                     NpgsqlDataReader reader = command.ExecuteReader();
