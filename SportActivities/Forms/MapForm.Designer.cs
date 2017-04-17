@@ -54,6 +54,7 @@
             this.lngStatusBar = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnRouting = new System.Windows.Forms.Button();
             this.btnQuery = new System.Windows.Forms.Button();
+            this.btnReset = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -298,7 +299,7 @@
             // 
             // btnRouting
             // 
-            this.btnRouting.Location = new System.Drawing.Point(12, 497);
+            this.btnRouting.Location = new System.Drawing.Point(13, 493);
             this.btnRouting.Name = "btnRouting";
             this.btnRouting.Size = new System.Drawing.Size(99, 23);
             this.btnRouting.TabIndex = 12;
@@ -308,7 +309,7 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(13, 468);
+            this.btnQuery.Location = new System.Drawing.Point(12, 464);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(99, 23);
             this.btnQuery.TabIndex = 15;
@@ -316,11 +317,22 @@
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
+            // btnReset
+            // 
+            this.btnReset.Location = new System.Drawing.Point(12, 522);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(100, 23);
+            this.btnReset.TabIndex = 16;
+            this.btnReset.Text = "Reset";
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1096, 742);
+            this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.btnFeatureInfo);
@@ -374,6 +386,7 @@
         private System.Windows.Forms.ToolStripStatusLabel lngStatusBar;
         private System.Windows.Forms.Button btnRouting;
         private System.Windows.Forms.Button btnQuery;
+        private System.Windows.Forms.Button btnReset;
     }
 }
 

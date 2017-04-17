@@ -211,7 +211,7 @@ namespace SportActivities
         {
             Coordinate start = reverseTransfCoord.MathTransform.Transform(routingPoints[0].Coordinate);
             Coordinate end = reverseTransfCoord.MathTransform.Transform(routingPoints[1].Coordinate);
-            //prepare temp table
+            
             using (NpgsqlConnection conn = new NpgsqlConnection(connectionParams))
             {
                 conn.Open();
@@ -227,18 +227,14 @@ namespace SportActivities
                     command.ExecuteNonQuery();
                 }
             }
-
-            //create layer
-            VectorLayer layer = new VectorLayer("RouteAtoB");
+            
+            VectorLayer layer = new VectorLayer("Routing");
             var postGisProvider = new PostGIS(connectionParams, "temp_route", "geom", "seq");
-
             postGisProvider.SRID = 4326;
             layer.DataSource = postGisProvider;
-
+            layer.Style.Line = new Pen(Color.Chocolate, 5);
             layer.CoordinateTransformation = transfCoord;
             layer.ReverseCoordinateTransformation = reverseTransfCoord;
-
-            layer.Style.Line = new Pen(Color.IndianRed, 5);
 
             return layer;
         }

@@ -358,5 +358,22 @@ namespace SportActivities
         {
             int x = 10;
         }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            foreach (TreeNode layerNode in layersTreeView.Nodes)
+                layerNode.Checked = false;
+
+            showLabels = false;
+            btnShowLabels.BackColor = SystemColors.Control;
+            showFeatureInfo = false;
+            btnFeatureInfo.BackColor = SystemColors.Control;
+            showRouting = false;
+            startPointChosen = false;
+            btnRouting.BackColor = SystemColors.Control;
+
+            mapBox.Map.Layers.Clear();
+            mapBox.Refresh();
+        }
     }
 }
