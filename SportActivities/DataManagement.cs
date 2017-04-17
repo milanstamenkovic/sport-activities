@@ -21,7 +21,6 @@ namespace SportActivities
     {
         private static DataManagement instance;
 
-
         public CoordinateTransformationFactory ctFact { get; set; }
         public ICoordinateTransformation transfCoord { get; set; }
         public ICoordinateTransformation reverseTransfCoord { get; set; }
@@ -115,10 +114,14 @@ namespace SportActivities
             IGeometry geometry = getGeometryFromPoint(coord, areaSize);
             FeatureDataSet fds = new FeatureDataSet();
 
-            foreach (VectorLayer layer in layers)
+            for(int i = 0; i < layers.Count; ++i)
             {
-                if (layer.IsQueryEnabled)
-                    layer.ExecuteIntersectionQuery(geometry.EnvelopeInternal, fds);
+                if(layers[i] is VectorLayer)
+                {
+                    VectorLayer layer = (VectorLayer)layers[i];
+                    if (layer.IsQueryEnabled)
+                        layer.ExecuteIntersectionQuery(geometry.EnvelopeInternal, fds);
+                }
             }
             return fds;
         }
@@ -159,6 +162,21 @@ namespace SportActivities
                     foreach (FeatureDataRow fdr in fds.Tables[i].Rows)
                         geomColl.Add(fdr.Geometry);
                 }
+            }
+
+            resultLayer.DataSource = new GeometryProvider(geomColl);
+            return resultLayer;
+        }
+
+        public VectorLayer getLayerFromFeatureDataSet(FeatureDataSet fds)
+        {
+            VectorLayer resultLayer = createLayer("FeatureData layer");
+            Collection<IGeometry> geomColl = new Collection<IGeometry>();
+
+            foreach(FeatureDataTable table in fds.Tables)
+            {
+                foreach (FeatureDataRow row in table.Rows)
+                    geomColl.Add(row.Geometry);
             }
 
             resultLayer.DataSource = new GeometryProvider(geomColl);

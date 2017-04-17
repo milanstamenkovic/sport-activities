@@ -218,7 +218,7 @@ namespace SportActivities
             activeToolLabel.Text = e.ClickedItem.Text;
             ((ToolStripMenuItem)e.ClickedItem).Checked = true;
 
-            mapBox.ActiveTool = getTool(Int32.Parse((string)e.ClickedItem.Tag));
+            mapBox.ActiveTool = getTool(int.Parse((string)e.ClickedItem.Tag));
         }
 
         private MapBox.Tools getTool(int value)
@@ -299,6 +299,7 @@ namespace SportActivities
                 if(query != null)
                 {
                     uncheckLayerTreeView();
+
                     VectorLayer queryLayer = dataManagement.DefinitionQueryFilter(query);
                     mapBox.Map.Layers.Clear();
                     mapBox.Map.BackgroundLayer.Clear();
@@ -315,6 +316,16 @@ namespace SportActivities
                     FeatureInfoForm fdsForm = new FeatureInfoForm(dataManagement.getFeatureDataSetForLayer(queryLayer));
                 }
             };
+        }
+
+        private void mapBox_MapQueried(FeatureDataTable data)
+        {
+            int x = 10;
+        }
+
+        private void mapBox_MapQueryDone(object sender, EventArgs e)
+        {
+            int x = 10;
         }
     }
 }

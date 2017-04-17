@@ -63,8 +63,6 @@ namespace SportActivities
             comboboxLabel.SelectedIndex = comboboxLabel.FindStringExact(layer.labelLayer.LabelColumn);
         }
 
-       
-
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             Close();
@@ -99,31 +97,26 @@ namespace SportActivities
 
         private void btnLabelColor_Click(object sender, EventArgs e)
         {
-            cdColor.Color = btnLabelColor.BackColor;
-            DialogResult result = cdColor.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                btnLabelColor.BackColor = cdColor.Color;
-            }
+            showColorDialog(btnLabelColor);
         }
 
         private void btnGeometryColor_Click(object sender, EventArgs e)
         {
-            cdColor.Color = btnGeometryColor.BackColor;
-            DialogResult result = cdColor.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                btnGeometryColor.BackColor = cdColor.Color;
-            }
+            showColorDialog(btnGeometryColor);
         }
 
         private void btnOutlineColor_Click(object sender, EventArgs e)
         {
-            cdColor.Color = btnOutlineColor.BackColor;
+            showColorDialog(btnOutlineColor);
+        }
+
+        private void showColorDialog(Control control)
+        {
+            cdColor.Color = control.BackColor;
             DialogResult result = cdColor.ShowDialog();
             if (result == DialogResult.OK)
             {
-                btnOutlineColor.BackColor = cdColor.Color;
+                control.BackColor = cdColor.Color;
             }
         }
     }

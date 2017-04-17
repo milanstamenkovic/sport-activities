@@ -25,23 +25,13 @@ namespace SportActivities.Forms
 
         private void showFeatureInfo()
         {
-            int index = Convert.ToInt32(((ComboboxItem)comboBoxTables.SelectedItem).Value);
-            dgvTable.DataSource = featureDataSet.Tables[index];
+            string selectedTable = comboBoxTables.SelectedItem.ToString();
+            dgvTable.DataSource = featureDataSet.Tables.Where(x => x.TableName.Equals(selectedTable)).First();
         }
 
         private void populateComboBox()
         {
-            for (int i = 0; i < featureDataSet.Tables.Count; ++i)
-            {
-                FeatureDataTable table = featureDataSet.Tables[i];
-                if (table.Rows.Count > 0)
-                {
-                    ComboboxItem item = new ComboboxItem();
-                    item.Text = Utils.beautify(table.TableName);
-                    item.Value = i;
-                    comboBoxTables.Items.Add(item);
-                }
-            }
+            comboBoxTables.DataSource = featureDataSet.Tables.Select(x => x.TableName).ToList();
 
             if (comboBoxTables.Items.Count > 0)
             {
