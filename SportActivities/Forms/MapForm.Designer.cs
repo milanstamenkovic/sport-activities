@@ -68,7 +68,7 @@
             this.mapBox.Cursor = System.Windows.Forms.Cursors.SizeAll;
             this.mapBox.FineZoomFactor = 10D;
             this.mapBox.Location = new System.Drawing.Point(266, 50);
-            this.mapBox.MapQueryMode = SharpMap.Forms.MapBox.MapQueryType.LayerByIndex;
+            this.mapBox.MapQueryMode = SharpMap.Forms.MapBox.MapQueryType.AllLayers;
             this.mapBox.Name = "mapBox";
             this.mapBox.QueryGrowFactor = 5F;
             this.mapBox.QueryLayerIndex = 0;
@@ -81,7 +81,6 @@
             this.mapBox.WheelZoomMagnitude = -2D;
             this.mapBox.MouseMove += new SharpMap.Forms.MapBox.MouseEventHandler(this.mapBox_MouseMove);
             this.mapBox.MapQueried += new SharpMap.Forms.MapBox.MapQueryHandler(this.mapBox_MapQueried);
-            this.mapBox.MapQueryDone += new System.EventHandler(this.mapBox_MapQueryDone);
             this.mapBox.GeometryDefined += new SharpMap.Forms.MapBox.GeometryDefinedHandler(this.mapBox_GeometryDefined);
             this.mapBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mapBox_MouseClick);
             // 
@@ -164,7 +163,7 @@
             this.drawPolygonToolStripMenuItem,
             this.queryBoxToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
             this.toolsToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolsToolStripMenuItem_DropDownItemClicked);
             // 

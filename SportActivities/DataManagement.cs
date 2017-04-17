@@ -146,7 +146,7 @@ namespace SportActivities
             return new Polygon(lr);
         }
 
-        public VectorLayer GeometryFilter(LayerCollection layers, IGeometry geometry)
+        public LayerCollection GeometryFilter(LayerCollection layers, IGeometry geometry)
         {
             FeatureDataSet fds = new FeatureDataSet();
             VectorLayer resultLayer = createLayer("Geometry layer");
@@ -154,18 +154,34 @@ namespace SportActivities
 
             for(int i = 0; i < layers.Count; ++i)
             {
-                VectorLayer layer = (VectorLayer)layers[i];
-                if (layer.IsQueryEnabled)
+                if(layers[i] is VectorLayer)
                 {
-                    layer.ExecuteIntersectionQuery(geometry.EnvelopeInternal, fds);
+                    VectorLayer layer = (VectorLayer)layers[i];
+                    if (layer.IsQueryEnabled)
+                    {
+                        layer.ExecuteIntersectionQuery(geometry.EnvelopeInternal, fds);
 
-                    foreach (FeatureDataRow fdr in fds.Tables[i].Rows)
-                        geomColl.Add(fdr.Geometry);
+                        foreach (FeatureDataRow fdr in fds.Tables[i].Rows)
+                            geomColl.Add(fdr.Geometry);
+                    }
                 }
             }
-
+            geomColl.Add(geometry);
             resultLayer.DataSource = new GeometryProvider(geomColl);
-            return resultLayer;
+
+            LayerCollection resultColl = new LayerCollection();
+            resultColl.Add(resultLayer);
+
+            VectorLayer geomLayer = new VectorLayer("Geometry");
+            geomLayer.DataSource = new GeometryProvider(geometry);
+            geomLayer.Style.Fill = new SolidBrush(Color.FromArgb(50, 51, 181, 229));
+            geomLayer.Style.EnableOutline = true;
+            geomLayer.Style.Outline.Width = 1;
+            geomLayer.Style.Outline.Color = Color.Blue;
+
+            resultColl.Add(geomLayer);
+
+            return resultColl;
         }
 
         public VectorLayer getLayerFromFeatureDataSet(FeatureDataSet fds)
@@ -229,14 +245,11 @@ namespace SportActivities
             }
 
             //create layer
-            VectorLayer layer = new VectorLayer("RouteAtoB");
+            VectorLayer layer = createLayer("RouteAtoB");
             var postGisProvider = new PostGIS(connectionParams, "temp_route", "geom", "seq");
 
             postGisProvider.SRID = 4326;
             layer.DataSource = postGisProvider;
-
-            layer.CoordinateTransformation = transfCoord;
-            layer.ReverseCoordinateTransformation = reverseTransfCoord;
 
             layer.Style.Line = new Pen(Color.IndianRed, 5);
 

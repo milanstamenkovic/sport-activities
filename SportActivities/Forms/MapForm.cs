@@ -217,11 +217,11 @@ namespace SportActivities
             }
             else
             {
-                VectorLayer geometryLayer = dataManagement.GeometryFilter(mapBox.Map.Layers, geometry);
+                LayerCollection geometryColl = dataManagement.GeometryFilter(mapBox.Map.Layers, geometry);
+
                 mapBox.Map.Layers.Clear(); 
 
-                mapBox.Map.Layers.Add(geometryLayer);
-
+                mapBox.Map.Layers.AddCollection(geometryColl);
                 mapBox.Refresh();
                 mapBox.Invalidate();
             }
