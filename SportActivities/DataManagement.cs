@@ -189,7 +189,7 @@ namespace SportActivities
             return fds;
         }
         
-        public VectorLayer createRoutingLayer(Coordinate start, Coordinate end)
+        public VectorLayer createRoutingLayer(NetTopologySuite.Geometries.Point[] routingPoints)
         {
             //prepare temp table
             using (NpgsqlConnection conn = new NpgsqlConnection(connectionParams))
@@ -202,7 +202,7 @@ namespace SportActivities
                 }
 
                 using (NpgsqlCommand command = new NpgsqlCommand("CREATE TABLE temp_route" +
-                    " AS select * from pgr_fromAtoB('ways'," + start.X + "," + start.Y + "," + end.X + "," + end.Y + ");", conn))
+                    " AS select * from pgr_fromAtoB('ways'," + routingPoints[0].X + "," + routingPoints[0].Y + "," + routingPoints[1].X + "," + routingPoints[1].Y + ");", conn))
                 {
                     command.ExecuteNonQuery();
                 }
