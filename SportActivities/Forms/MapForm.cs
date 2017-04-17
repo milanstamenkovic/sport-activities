@@ -22,6 +22,7 @@ namespace SportActivities
         private bool showRouting;
         private bool startPointChosen; 
         private NetTopologySuite.Geometries.Point[] routingPoints;
+        private LayerCollection filterCollection;
 
         public MapForm()
         {
@@ -29,6 +30,7 @@ namespace SportActivities
 
             dataManagement = DataManagement.Instance;
 
+            filterCollection = new LayerCollection();
             layers = new Dictionary<string, LayerModel>();
             layerRecords = dataManagement.GetAllLayers();
             routingPoints = new NetTopologySuite.Geometries.Point[2];
@@ -289,6 +291,9 @@ namespace SportActivities
 
         private void btnFeatureInfo_Click(object sender, EventArgs e)
         {
+            if (showRouting)
+                btnRouting.PerformClick();
+
             showFeatureInfo = !showFeatureInfo;
 
             if(showFeatureInfo)
@@ -303,6 +308,9 @@ namespace SportActivities
 
         private void btnRouting_Click(object sender, EventArgs e)
         {
+            if (showFeatureInfo)
+                btnFeatureInfo.PerformClick();
+
             showRouting = !showRouting;
             startPointChosen = false;
             if (showRouting)
@@ -351,12 +359,37 @@ namespace SportActivities
 
         private void mapBox_MapQueried(FeatureDataTable data)
         {
-            int x = 10;
+            filterCollection.Add(dataManagement.getLayerFromFeatureDataTable(data));
+        }
+        
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            foreach (TreeNode layerNode in layersTreeView.Nodes)
+                layerNode.Checked = false;
+
+            showLabels = false;
+            btnShowLabels.BackColor = SystemColors.Control;
+            showFeatureInfo = false;
+            btnFeatureInfo.BackColor = SystemColors.Control;
+            showRouting = false;
+            startPointChosen = false;
+            btnRouting.BackColor = SystemColors.Control;
+            mapBox.ActiveTool = MapBox.Tools.Pan;
+            activeToolLabel.Text = "Pan";
+            foreach (ToolStripMenuItem item in toolsToolStripMenuItem.DropDownItems)
+                item.Checked = false;
+            panToolStripMenuItem.Checked = true;
+
+            mapBox.Map.Layers.Clear();
+            mapBox.Refresh();
         }
 
         private void mapBox_MapQueryDone(object sender, EventArgs e)
         {
-            int x = 10;
+            mapBox.Map.Layers.Clear();
+            mapBox.Map.Layers.AddCollection(filterCollection);
+
+            filterCollection.Clear();
         }
     }
 }

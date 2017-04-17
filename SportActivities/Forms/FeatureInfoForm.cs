@@ -31,7 +31,7 @@ namespace SportActivities.Forms
 
         private void populateComboBox()
         {
-            comboBoxTables.DataSource = featureDataSet.Tables.Select(x => x.TableName).ToList();
+            comboBoxTables.DataSource = featureDataSet.Tables.Where(x => x.Rows.Count > 0).Select(x => x.TableName).ToList();
 
             if (comboBoxTables.Items.Count > 0)
             {
@@ -43,6 +43,7 @@ namespace SportActivities.Forms
             {
                 MessageBox.Show("There is not any intersection here!");
                 Close();
+                Dispose();
             }
         }
 

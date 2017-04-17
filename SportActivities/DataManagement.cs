@@ -24,7 +24,7 @@ namespace SportActivities
         public CoordinateTransformationFactory ctFact { get; set; }
         public ICoordinateTransformation transfCoord { get; set; }
         public ICoordinateTransformation reverseTransfCoord { get; set; }
-        public  ConnectionStringSettingsCollection connectionStrings { get; set; }
+        public ConnectionStringSettingsCollection connectionStrings { get; set; }
         public string connectionParams;
 
         private DataManagement()
@@ -41,7 +41,7 @@ namespace SportActivities
         {
             get
             {
-                if(instance == null)
+                if (instance == null)
                 {
                     instance = new DataManagement();
                 }
@@ -93,7 +93,7 @@ namespace SportActivities
             {
                 conn.Open();
 
-                using (NpgsqlCommand command = new NpgsqlCommand("select * from geometry_columns where f_table_schema = 'public' and f_geometry_column = 'geom';", conn))
+                using (NpgsqlCommand command = new NpgsqlCommand("select * from geometry_columns where f_table_schema = 'public' and f_geometry_column = 'geom' and f_table_name != 'temp_route';", conn))
                 {
 
                     NpgsqlDataReader reader = command.ExecuteReader();
@@ -114,9 +114,9 @@ namespace SportActivities
             IGeometry geometry = getGeometryFromPoint(coord, areaSize);
             FeatureDataSet fds = new FeatureDataSet();
 
-            for(int i = 0; i < layers.Count; ++i)
+            for (int i = 0; i < layers.Count; ++i)
             {
-                if(layers[i] is VectorLayer)
+                if (layers[i] is VectorLayer)
                 {
                     VectorLayer layer = (VectorLayer)layers[i];
                     if (layer.IsQueryEnabled)
@@ -146,27 +146,41 @@ namespace SportActivities
             return new Polygon(lr);
         }
 
+        private Polygon convertCoordinates(IGeometry geometry)
+        {
+            Coordinate[] coords = geometry.Coordinates;
+            Coordinate[] transCoords = new Coordinate[coords.Length];
+
+            for (int i = 0; i < coords.Length - 1; i++)
+                transCoords[i] = reverseTransfCoord.MathTransform.Transform(coords[i]);
+
+            transCoords[coords.Length - 1] = transCoords[0];
+
+            LinearRing lr = new LinearRing(transCoords);
+            return new Polygon(lr); ;
+        }
+
         public LayerCollection GeometryFilter(LayerCollection layers, IGeometry geometry)
         {
             FeatureDataSet fds = new FeatureDataSet();
             VectorLayer resultLayer = createLayer("Geometry layer");
             Collection<IGeometry> geomColl = new Collection<IGeometry>();
 
-            for(int i = 0; i < layers.Count; ++i)
+            for (int i = 0; i < layers.Count; ++i)
             {
-                if(layers[i] is VectorLayer)
+                if (layers[i] is VectorLayer)
                 {
                     VectorLayer layer = (VectorLayer)layers[i];
-                    if (layer.IsQueryEnabled)
-                    {
-                        layer.ExecuteIntersectionQuery(geometry.EnvelopeInternal, fds);
 
-                        foreach (FeatureDataRow fdr in fds.Tables[i].Rows)
-                            geomColl.Add(fdr.Geometry);
-                    }
+                    List<IGeometry> layerGeoms = layer.DataSource.GetGeometriesInView(layer.DataSource.GetExtents()).ToList();
+                    Polygon pol = convertCoordinates(geometry);
+
+                    foreach (IGeometry geom in layerGeoms)
+                        if (pol.Contains(geom))
+                            geomColl.Add(geom);
                 }
             }
-            geomColl.Add(geometry);
+
             resultLayer.DataSource = new GeometryProvider(geomColl);
 
             LayerCollection resultColl = new LayerCollection();
@@ -184,16 +198,13 @@ namespace SportActivities
             return resultColl;
         }
 
-        public VectorLayer getLayerFromFeatureDataSet(FeatureDataSet fds)
+        public VectorLayer getLayerFromFeatureDataTable(FeatureDataTable fdt)
         {
             VectorLayer resultLayer = createLayer("FeatureData layer");
             Collection<IGeometry> geomColl = new Collection<IGeometry>();
 
-            foreach(FeatureDataTable table in fds.Tables)
-            {
-                foreach (FeatureDataRow row in table.Rows)
-                    geomColl.Add(row.Geometry);
-            }
+            foreach (FeatureDataRow row in fdt.Rows)
+                geomColl.Add(row.Geometry);
 
             resultLayer.DataSource = new GeometryProvider(geomColl);
             return resultLayer;
@@ -209,7 +220,7 @@ namespace SportActivities
                 provider.DefinitionQuery = query.Condition;
 
             resultLayer.DataSource = provider;
-            
+
             return resultLayer;
         }
 
@@ -222,12 +233,12 @@ namespace SportActivities
 
             return fds;
         }
-        
+
         public VectorLayer createRoutingLayer(NetTopologySuite.Geometries.Point[] routingPoints)
         {
             Coordinate start = reverseTransfCoord.MathTransform.Transform(routingPoints[0].Coordinate);
             Coordinate end = reverseTransfCoord.MathTransform.Transform(routingPoints[1].Coordinate);
-            //prepare temp table
+
             using (NpgsqlConnection conn = new NpgsqlConnection(connectionParams))
             {
                 conn.Open();
@@ -243,15 +254,13 @@ namespace SportActivities
                     command.ExecuteNonQuery();
                 }
             }
-
-            //create layer
-            VectorLayer layer = createLayer("RouteAtoB");
+            VectorLayer layer = createLayer("Routing");
             var postGisProvider = new PostGIS(connectionParams, "temp_route", "geom", "seq");
-
             postGisProvider.SRID = 4326;
             layer.DataSource = postGisProvider;
 
             layer.Style.Line = new Pen(Color.IndianRed, 5);
+            layer.Style.Line = new Pen(Color.Chocolate, 5);
 
             return layer;
         }
